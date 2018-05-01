@@ -1,10 +1,14 @@
 ﻿using System.Net.Http;
 using System.Security.Principal;
-
+using  Microsoft.AspNetCore.Http;
 namespace EnsembleFX.Logging
 {
     public class LoggerHelper
     {
+        private IHttpContextAccessor httpContextAccessor;
+        public LoggerHelper(IHttpContextAccessor httpContextAccessor){
+            this.httpContextAccessor = httpContextAccessor;
+        }
         #region Public Methods
 
         public static LogModel GetLogModel(HttpRequestMessage request, string environment, string userName, string message, string applicationIdentifier = "")
