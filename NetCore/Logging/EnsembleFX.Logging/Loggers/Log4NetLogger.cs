@@ -99,6 +99,8 @@ namespace EnsembleFX.Logging.Loggers
         /// </summary>
         public void Initialize()
         {
+            // TODO See how log4net is used in .net core
+            /*
             if (!String.IsNullOrEmpty(LoggerParameters))
             {
                 FileInfo configFileInfo = new FileInfo(LoggerParameters);
@@ -110,6 +112,7 @@ namespace EnsembleFX.Logging.Loggers
             }
 
             logger = log4net.LogManager.GetLogger(LoggerName);
+            */
             if (logger != null)
             {
                 isInitalized = true;

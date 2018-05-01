@@ -101,6 +101,7 @@ namespace EnsembleFX.Utility
             return JsonSerializer.SerializeToString(instance, instance.GetType());
         }
 
+
         //public static string SerializeMessage(IMessage instance)
         //{
         //    return JsonSerializer.SerializeToString(instance, instance.GetType());

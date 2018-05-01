@@ -10,7 +10,7 @@ namespace EnsembleFX.Core.Dependency
     /// <summary>
     /// 
     /// </summary>
-    public class DependencyInstanceProvider : IInstanceProvider
+    public class DependencyInstanceProvider //: IInstanceProvider //To Do : .NET Core replacement for IInstanceProvider
     {
 
         #region Constructors

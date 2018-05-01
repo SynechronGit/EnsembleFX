@@ -1,5 +1,4 @@
-﻿using EnsembleFX.Filters;
-using EnsembleFX.Helper;
+﻿using EnsembleFX.Helper;
 using EnsembleFX.Logging;
 using EnsembleFX.Logging.Enums;
 using MongoDB.Bson;
@@ -13,6 +12,7 @@ using System.Configuration;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
+using EnsembleFX.Filters;
 
 namespace EnsembleFX.Repository
 {

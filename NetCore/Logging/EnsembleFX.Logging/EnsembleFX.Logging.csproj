@@ -3,19 +3,18 @@
   <ItemGroup>
     <ProjectReference Include="..\EnsembleFX.Logging.Model\EnsembleFX.Logging.Model.csproj" />
     <ProjectReference Include="..\..\Core\EnsembleFX.Core\EnsembleFX.Core.csproj" />
-    <ProjectReference Include="..\..\Repository\EnsembleFX.Repository\EnsembleFX.Repository.csproj" />
     <ProjectReference Include="..\..\Storage\EnsembleFX.StorageAdapter\EnsembleFX.StorageAdapter.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="log4net" Version="2.0.8" />
-    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.1.0-preview2-final" />
      <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.4.1" />
      <PackageReference Include="WindowsAzure.Storage" Version="9.1.1" />
   </ItemGroup>
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
 
 </Project>

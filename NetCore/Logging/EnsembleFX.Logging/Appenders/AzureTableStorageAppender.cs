@@ -2,7 +2,8 @@
 using EnsembleFX.StorageAdapter;
 using log4net.Appender;
 using log4net.Core;
-
+using Microsoft.WindowsAzure.Storage.Table;
+using  System.Threading.Tasks;
 namespace EnsembleFX.Logging.Appenders
 {
     public class AzureTableStorageAppender : AppenderSkeleton
@@ -17,7 +18,7 @@ namespace EnsembleFX.Logging.Appenders
             //LogEntityType = typeof(ApplicationLogs);
         }
 
-        protected override void Append(LoggingEvent loggingEvent)
+        protected async override void Append(LoggingEvent loggingEvent)
         {
             ApplicationLogs appLogs = new ApplicationLogs();
             appLogs.Message = loggingEvent.RenderedMessage;
@@ -45,7 +46,7 @@ namespace EnsembleFX.Logging.Appenders
             //appLogs.OSVersion = (log4net.LogicalThreadContext.Properties["OSVersion"] != null) ? log4net.LogicalThreadContext.Properties["OSVersion"].ToString() : string.Empty;
             //appLogs.BrowserVersion = (log4net.LogicalThreadContext.Properties["BrowserVersion"] != null) ? log4net.LogicalThreadContext.Properties["BrowserVersion"].ToString() : string.Empty;
             //azureStorageTableAdapter.InsertTable<ApplicationLogs>("ApplicationLogs", appLogs);
-            azureStorageTableAdapter.InsertAsync(appLogs);
+            await azureStorageTableAdapter.InsertAsync(appLogs);
         }
     }
 }

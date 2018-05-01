@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EnsembleFX.StorageAdapter.Model;
+using Microsoft.Extensions.Options;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 
@@ -25,17 +27,19 @@ namespace EnsembleFX.StorageAdapter
         private CloudBlobClient blobClient;
         private CloudBlobContainer blobContainer;
         private CloudBlockBlob blockBlob;
-        private double sharedAccessTokenExpiryTimeInMinutes = string.IsNullOrEmpty(System.Configuration.ConfigurationManager.AppSettings["SharedAccessTokenExpiryTimeInMinutes"]) ? 2 : double.Parse(System.Configuration.ConfigurationManager.AppSettings["SharedAccessTokenExpiryTimeInMinutes"]);
+        private double sharedAccessTokenExpiryTimeInMinutes;
 
         public CloudBlobContainer BlobContainer { get { return blobContainer; } }
         #endregion
 
         #region Constructors
 
-        public AzureStorageAdapter()
+        public AzureStorageAdapter(IOptions<AppSettings> appSettings)
         {
-            CloudConnection = System.Configuration.ConfigurationManager.ConnectionStrings["AzureStorageAccount"].ConnectionString;
-            CloudContainer = System.Configuration.ConfigurationManager.AppSettings["cloudContainer"];
+            //TODO:: Need to configure the AppSettings in StartUp.cs file
+            CloudConnection = appSettings.Value.AzureStorageAccount;
+            CloudContainer = appSettings.Value.CloudContainer;
+            sharedAccessTokenExpiryTimeInMinutes = string.IsNullOrEmpty(appSettings.Value.SharedAccessTokenExpiryTimeInMinutes) ? 2 : double.Parse(appSettings.Value.SharedAccessTokenExpiryTimeInMinutes);
             Initialize();
         }
 
