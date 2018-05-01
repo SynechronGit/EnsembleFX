@@ -18,6 +18,8 @@ namespace EnsembleFX.Logging.LoggingAspect
             if(controller != null)
                 this.logController = controller;
         }
+        //TODO Need to see how we can do this in .net core
+        /*
         public override IMethodReturn Invoke(IMethodInvocation input, GetNextInterceptionBehaviorDelegate getNext)
         {
             // Log method invocation message
@@ -71,5 +73,6 @@ namespace EnsembleFX.Logging.LoggingAspect
 
             return methodInvokeResult;
         }
+         */
     }
 }

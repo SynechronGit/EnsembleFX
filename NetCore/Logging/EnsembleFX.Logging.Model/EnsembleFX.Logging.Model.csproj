@@ -1,5 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\EnsembleFX.Core\EnsembleFX.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="WindowsAzure.Storage" Version="9.1.1" />
+  </ItemGroup>
+  
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>

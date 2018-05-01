@@ -39,6 +39,8 @@ namespace EnsembleFX.Logging
         public static string GetBrowserInfo(HttpRequestMessage request)
         {
             string browser = string.Empty;
+            // TODO Need to see how to get browser info in .net core
+            /*
             if (request != null && request.Properties.ContainsKey("MS_HttpContext"))
             {
                 var context = request.Properties["MS_HttpContext"] as HttpContextWrapper;
@@ -47,6 +49,7 @@ namespace EnsembleFX.Logging
                     string.Empty;
 
             }
+             */
             return browser;
         }
 
@@ -54,33 +57,42 @@ namespace EnsembleFX.Logging
         {
 
             string clientIp = string.Empty;
+            // TODO Need to see how to get user host address in .net core
+            /*
             if (request != null && request.Properties.ContainsKey("MS_HttpContext"))
             {
                 var context = request.Properties["MS_HttpContext"] as HttpContextWrapper;
                 clientIp = context != null && context.Request != null ? context.Request.UserHostAddress : string.Empty;
             }
+            */
             return clientIp;
         }
 
         public static string GetHostInfo(HttpRequestMessage request)
         {
             string host = string.Empty;
+              // TODO Need to see how to get user host info in .net core
+            /*
             if (request != null && request.Properties.ContainsKey("MS_HttpContext"))
             {
                 var context = request.Properties["MS_HttpContext"] as HttpContextWrapper;
                 host = context != null && context.Request != null ? context.Request.UserHostName : string.Empty;
             }
+            */
             return host;
         }
 
         public static string GetReferer(HttpRequestMessage request)
         {
             string referrer = string.Empty;
+              // TODO Need to see how to get user referer in .net core
+            /*
             if (request != null && request.Properties.ContainsKey("MS_HttpContext"))
             {
                 var context = request.Properties["MS_HttpContext"] as HttpContextWrapper;
                 referrer = context != null && context.Request != null && context.Request.UrlReferrer != null ? context.Request.UrlReferrer.AbsoluteUri : string.Empty;
             }
+            */
             return referrer;
         }
 

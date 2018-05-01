@@ -125,6 +125,8 @@ namespace EnsembleFX.Logging
                     switch (ex.GetType().FullName)
                     {
                         case "System.Data.Entity.Validation.DbEntityValidationException":
+                        // TODO Need to see replacement of System.Data.Entity in .Net Core
+                        /*
                             System.Data.Entity.Validation.DbEntityValidationException validation = ex as System.Data.Entity.Validation.DbEntityValidationException;
                             exceptionMessage = "ExceptionMessage-";
                             if (validation != null && validation.EntityValidationErrors != null)
@@ -138,7 +140,7 @@ namespace EnsembleFX.Logging
                                 }
 
                             }
-
+                        */
 
                             break;
                     }

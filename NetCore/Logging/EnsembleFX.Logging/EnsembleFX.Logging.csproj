@@ -4,6 +4,7 @@
     <ProjectReference Include="..\EnsembleFX.Logging.Model\EnsembleFX.Logging.Model.csproj" />
     <ProjectReference Include="..\..\Core\EnsembleFX.Core\EnsembleFX.Core.csproj" />
     <ProjectReference Include="..\..\Repository\EnsembleFX.Repository\EnsembleFX.Repository.csproj" />
+    <ProjectReference Include="..\..\Storage\EnsembleFX.StorageAdapter\EnsembleFX.StorageAdapter.csproj" />
   </ItemGroup>
 
   <ItemGroup>
