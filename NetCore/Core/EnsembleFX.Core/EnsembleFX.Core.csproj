@@ -5,12 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Dependency\**" />
-    <EmbeddedResource Remove="Dependency\**" />
-    <None Remove="Dependency\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Configuration\" />
     <Folder Include="Exceptions\" />
     <Folder Include="Helpers\" />
