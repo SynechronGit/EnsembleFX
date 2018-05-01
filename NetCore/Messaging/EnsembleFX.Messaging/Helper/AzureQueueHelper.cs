@@ -2,6 +2,8 @@
 using EnsembleFX.Logging.Enums;
 using EnsembleFX.Messaging;
 using EnsembleFX.Messaging.Bus;
+using EnsembleFX.Messaging.Model;
+using EnsembleFX.Messaging.Model.Enums;
 using EnsembleFX.Repository;
 using EnsembleFX.Shared;
 using Microsoft.Azure;
