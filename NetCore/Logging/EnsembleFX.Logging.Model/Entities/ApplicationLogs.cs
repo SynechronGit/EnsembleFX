@@ -12,7 +12,7 @@ namespace EnsembleFX.Logging.Entities
 {
     [Serializable]
     [DataContract]
-    public class ApplicationLogs : TableEntity
+    public class ApplicationLogs : Microsoft.WindowsAzure.Storage.Table.TableEntity
     {
         #region Constructors
 

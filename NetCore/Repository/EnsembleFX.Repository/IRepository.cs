@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
+//using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
-using EnsembleFX.Filters;
+//using EnsembleFX.Filters;
 
 namespace EnsembleFX.Repository
 {
@@ -33,9 +33,14 @@ namespace EnsembleFX.Repository
         void Save();
         Task<int> SaveAsync();
         IList<T> ExecuteQuery(string query);
-        IDbSet<T> DBSet { get; }
+        
+        //TODO Find System.Data.Entity replacement
+        //IDbSet<T> DBSet { get; }
+
+        //TODO Add after filter project is converted
+        /*
         IList<T> GetSearchedData(PagingFiltering pagingFilters, out int total, string orderByPredicate, params string[] associations);
         void AddFilter(PagingFiltering pagingFilters, string field, string filterOperator, string variable);
-        
+        */
     }
 }

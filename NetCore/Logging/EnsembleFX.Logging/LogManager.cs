@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using EnsembleFX.Core.Dependency;
 using EnsembleFX.Logging.Entities;
 using EnsembleFX.Logging.Enums;
 
@@ -38,6 +37,7 @@ namespace EnsembleFX.Logging
                   return this;
         }
 
+        // TODO configuration of ILogController to be done in respective services startup class
         /// <summary>
         /// Prevents a default instance of the <see cref="LogManager"/> class from being created.
         /// </summary>

@@ -6,14 +6,16 @@ using System.Text;
 using System.Threading.Tasks;
 using log4net.Core;
 using EnsembleFX.Logging.Entities;
-using EnsembleFX.Repository;
+// TODO : remove circular dependency between repository and logging
+//using EnsembleFX.Repository; 
 
 namespace EnsembleFX.Logging.Appenders
 {
     public class MongoAppender : AppenderSkeleton
     {
         #region Private Variables
-        private IDBRepository<ApplicationLogs> _dbRepository;
+        // TODO : remove circular dependency between repository and logging
+        //private  IDBRepository<ApplicationLogs> _dbRepository;
         #endregion
 
         public MongoAppender()
@@ -47,9 +49,11 @@ namespace EnsembleFX.Logging.Appenders
             //appLogs.RequestObject = (log4net.LogicalThreadContext.Properties["RequestObject"] != null) ? log4net.LogicalThreadContext.Properties["RequestObject"].ToString() : string.Empty;
             //appLogs.EventName = (log4net.LogicalThreadContext.Properties["EventName"] != null) ? log4net.LogicalThreadContext.Properties["EventName"].ToString() : string.Empty;
             appLogs.StackTrace = (log4net.LogicalThreadContext.Properties["StackTrace"] != null) ? log4net.LogicalThreadContext.Properties["StackTrace"].ToString() : string.Empty;
-
+            // TODO : remove circular dependency between repository and logging
+            /*
             _dbRepository = new MongoDbRepository<ApplicationLogs>("applogs");
             _dbRepository.Insert(appLogs);
+            */
         }
     }
 }
