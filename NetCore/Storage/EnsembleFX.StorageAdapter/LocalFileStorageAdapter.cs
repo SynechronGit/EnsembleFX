@@ -13,9 +13,8 @@ namespace EnsembleFX.StorageAdapter
         internal string StoragePath;
 
         public LocalFileStorageAdapter()
-        {
-            //TODO:: Need to move all app setting into API project
-            StoragePath = System.Configuration.ConfigurationManager.AppSettings["storagePath"];
+        {            
+            //StoragePath = System.Configuration.ConfigurationManager.AppSettings["storagePath"];
             Initialize();
         }
 

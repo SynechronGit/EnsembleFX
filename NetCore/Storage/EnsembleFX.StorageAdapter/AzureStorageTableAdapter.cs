@@ -32,8 +32,8 @@ namespace EnsembleFX.StorageAdapter
 
         public AzureStorageTableAdapter(string tableName)
         {       
-            CloudConnection = System.Configuration.ConfigurationManager.ConnectionStrings["AzureStorageAccount"].ConnectionString;
-            CloudContainer = System.Configuration.ConfigurationManager.AppSettings["cloudContainer"];
+            //CloudConnection = System.Configuration.ConfigurationManager.ConnectionStrings["AzureStorageAccount"].ConnectionString;
+            //CloudContainer = System.Configuration.ConfigurationManager.AppSettings["cloudContainer"];
             Initialize(tableName);
         }
 
@@ -264,6 +264,7 @@ namespace EnsembleFX.StorageAdapter
             //        items = _cloudTable.ExecuteQuery(fluentQuery).Skip(skipCount).Take(takeCount);
             //    }
             //}
+
             var items = _cloudTable.ExecuteQuery(fluentQuery).Skip(skipCount).Take(takeCount);
             alllItems.AddRange(items);
             return alllItems;
@@ -273,7 +274,7 @@ namespace EnsembleFX.StorageAdapter
         /// </summary>
         /// <returns></returns>
         public long GetTableRowCount()
-        {
+        {            
             return _cloudTable.ExecuteQuery(new TableQuery<T>()).LongCount();
         }
 
