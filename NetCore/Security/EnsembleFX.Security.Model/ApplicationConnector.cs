@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EnsembleFX.Core.Security
+namespace EnsembleFX.Core.Security.Model
 {
     /// <summary>
     /// Provides a hook for applications to pass on multiple connectionstrings for multiple databases.

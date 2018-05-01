@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace EnsembleFX.Core.Security
+namespace EnsembleFX.Core.Security.Model
 {
     /// <summary>
     /// Represents a configurable value within the ERMS system

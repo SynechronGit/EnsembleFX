@@ -5,7 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EnsembleFX.Security.Model\EnsembleFX.Security.Model.csproj" />
   </ItemGroup>
 
 </Project>

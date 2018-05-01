@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace EnsembleFX.Core.Security
+namespace EnsembleFX.Core.Security.Model
 {
     /// <summary>
     /// Object representation for an ERMS permission

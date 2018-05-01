@@ -1,9 +1,7 @@
 ﻿using System.Security.Claims;
-
-
 using Microsoft.AspNetCore.Http;
 
-namespace EnsembleFX.Core.Security
+namespace EnsembleFX.Core.Security.Model
 {
     public class EnsembleContext
     {
