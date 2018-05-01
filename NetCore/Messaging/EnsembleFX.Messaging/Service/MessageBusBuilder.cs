@@ -1,7 +1,16 @@
 ﻿using EnsembleFX.Messaging.Configuration;
 using EnsembleFX.Messaging.Logging;
 using EnsembleFX.Messaging.QueueAdapter;
-using Microsoft.Practices.ServiceLocation;
+//TODO Verify: commented as CommonServiceLocation nuget is referecned
+//using Microsoft.Practices.ServiceLocation;
+using CommonServiceLocator;
+
+//TODO Verify: commented as Unity nuget is referenced.
+//using Microsoft.Practices.Unity;
+//using Microsoft.Practices.Unity.Configuration;
+using Unity;
+using Unity.ServiceLocation;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;

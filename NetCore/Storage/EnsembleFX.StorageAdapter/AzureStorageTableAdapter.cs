@@ -1,4 +1,6 @@
 ﻿using EnsembleFX.Filters;
+using EnsembleFX.StorageAdapter.Model;
+using Microsoft.Extensions.Options;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 using System;
@@ -26,14 +28,15 @@ namespace EnsembleFX.StorageAdapter
 
         #region Constructors
 
-        public AzureStorageTableAdapter() : this(typeof(T).Name)
+        public AzureStorageTableAdapter(IOptions<AppSettings> appSettings) : this(typeof(T).Name, appSettings)
         {
         }
 
-        public AzureStorageTableAdapter(string tableName)
-        {       
-            //CloudConnection = System.Configuration.ConfigurationManager.ConnectionStrings["AzureStorageAccount"].ConnectionString;
-            //CloudContainer = System.Configuration.ConfigurationManager.AppSettings["cloudContainer"];
+        public AzureStorageTableAdapter(string tableName, IOptions<AppSettings> appSettings)
+        {
+            //TODO:: Need to configure the AppSettings in StartUp.cs file
+            CloudConnection = appSettings.Value.AzureStorageAccount;
+            CloudContainer = appSettings.Value.CloudContainer;
             Initialize(tableName);
         }
 
@@ -265,7 +268,8 @@ namespace EnsembleFX.StorageAdapter
             //    }
             //}
 
-            var items = _cloudTable.ExecuteQuery(fluentQuery).Skip(skipCount).Take(takeCount);
+            TableContinuationToken continuationToken = new TableContinuationToken();
+            var items = _cloudTable.ExecuteQuerySegmentedAsync(fluentQuery, continuationToken).Result.Skip(skipCount).Take(takeCount);
             alllItems.AddRange(items);
             return alllItems;
         }
@@ -274,8 +278,9 @@ namespace EnsembleFX.StorageAdapter
         /// </summary>
         /// <returns></returns>
         public long GetTableRowCount()
-        {            
-            return _cloudTable.ExecuteQuery(new TableQuery<T>()).LongCount();
+        {
+            TableContinuationToken continuationToken = new TableContinuationToken();
+            return _cloudTable.ExecuteQuerySegmentedAsync(new TableQuery<T>(), continuationToken).Result.LongCount();
         }
 
     }

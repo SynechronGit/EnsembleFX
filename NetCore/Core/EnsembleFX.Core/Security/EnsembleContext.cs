@@ -6,6 +6,8 @@ using System.Web;
 
 namespace EnsembleFX.Core.Security
 {
+
+    //To Do : HttpContext replancement for .NET Core. Uncomment commented code and remove all return null statement.
     public class EnsembleContext
     {
         public static string Email
