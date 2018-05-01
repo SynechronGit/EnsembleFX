@@ -1,7 +1,9 @@
 ﻿using EnsembleFX.Logging.Entities;
 using EnsembleFX.StorageAdapter;
+using EnsembleFX.StorageAdapter.Model;
 using log4net.Appender;
 using log4net.Core;
+using Microsoft.Extensions.Options;
 using Microsoft.WindowsAzure.Storage.Table;
 using  System.Threading.Tasks;
 namespace EnsembleFX.Logging.Appenders
@@ -12,9 +14,9 @@ namespace EnsembleFX.Logging.Appenders
         private AzureStorageTableAdapter<ApplicationLogs> azureStorageTableAdapter;
         #endregion
 
-        public AzureTableStorageAppender()
+        public AzureTableStorageAppender(IOptions<AppSettings> appSettings)
         {
-            azureStorageTableAdapter = new AzureStorageTableAdapter<ApplicationLogs>();
+            azureStorageTableAdapter = new AzureStorageTableAdapter<ApplicationLogs>(appSettings);
             //LogEntityType = typeof(ApplicationLogs);
         }
 

@@ -36,15 +36,16 @@ namespace EnsembleFX.Messaging.Service
             //Unity configuration
             this._container = new UnityContainer();
 
-            UnityConfigurationSection section = (UnityConfigurationSection)ConfigurationManager.GetSection("unity");
-            section.Configure(_container, "default");
+            //TODO : While using .Net Core dependency
+            //UnityConfigurationSection section = (UnityConfigurationSection)ConfigurationManager.GetSection("unity");
+            //section.Configure(_container, "default");
 
-            _container.RegisterType(
-                      AllClasses.FromLoadedAssemblies().Where(t => !string.IsNullOrEmpty(t.Namespace) &&
-                          (t.Namespace.StartsWith("EnsembleFX") || t.Namespace.StartsWith("EnsembleFX.Runtime.Api") || t.Namespace.StartsWith("Ensemble.")) && (t.Name.EndsWith("Manager") || t.Name.EndsWith("Repository"))),
-                      WithMappings.FromMatchingInterface,
-                      WithName.Default,
-                      WithLifetime.Transient);
+            //_container.RegisterType(
+            //          AllClasses.FromLoadedAssemblies().Where(t => !string.IsNullOrEmpty(t.Namespace) &&
+            //              (t.Namespace.StartsWith("EnsembleFX") || t.Namespace.StartsWith("EnsembleFX.Runtime.Api") || t.Namespace.StartsWith("Ensemble.")) && (t.Name.EndsWith("Manager") || t.Name.EndsWith("Repository"))),
+            //          WithMappings.FromMatchingInterface,
+            //          WithName.Default,
+            //          WithLifetime.Transient);
 
             ServiceLocator.SetLocatorProvider(() => new UnityServiceLocator(_container));
             

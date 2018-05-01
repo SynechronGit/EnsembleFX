@@ -37,9 +37,9 @@ namespace EnsembleFX.Repository
         private const string COSMOS_ISCOSMOSDB = "IsCosmosDB";
         LogManager logManager;
 
-        public MongoDbRepository(string collection)
+        public MongoDbRepository(string collection, ILogController logController)
         {
-            logManager = new LogManager();
+            logManager = new LogManager(logController);
             _collection = collection;
             GetDatabase();
             GetCollection();

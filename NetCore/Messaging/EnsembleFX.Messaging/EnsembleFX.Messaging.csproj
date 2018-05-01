@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,10 +12,12 @@
     <PackageReference Include="System.Data.SqlClient" Version="4.4.3" />
     <PackageReference Include="Unity" Version="5.8.6" />
     <PackageReference Include="Unity.Configuration" Version="5.2.2" />
+    <PackageReference Include="Unity.ServiceLocation" Version="2.1.1" />
     <PackageReference Include="WindowsAzure.ServiceBus" Version="4.1.9" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Repository\EnsembleFX.Repository\EnsembleFX.Repository.csproj" />
     <ProjectReference Include="..\EnsembleFX.Messaging.Model\EnsembleFX.Messaging.Model.csproj" />
   </ItemGroup>
 

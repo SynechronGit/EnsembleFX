@@ -9,7 +9,7 @@ using  Microsoft.AspNetCore.Http;
 
 namespace EnsembleFX.Helper
 {
-    public static class OperationHelper
+    public class OperationHelper
     {
         private IHttpContextAccessor httpContextAccessor;
         public OperationHelper(IHttpContextAccessor httpContextAccessor){
@@ -46,13 +46,13 @@ namespace EnsembleFX.Helper
         /// Get logged in Username
         /// </summary>
         /// <returns>logged in Username</returns>
-        public static string GetUserName() {
+        public string GetUserName() {
             var HttpContext = this.httpContextAccessor.HttpContext;
-            return (HttpContext.Current != null && 
-                    HttpContext.Current.User != null &&
-                    HttpContext.Current.User.Identity != null && 
-                    !string.IsNullOrEmpty(HttpContext.Current.User.Identity.Name)) ? 
-                        HttpContext.Current.User.Identity.Name : string.Empty;
+
+            return (HttpContext.User != null &&
+                    HttpContext.User.Identity != null &&
+                    !string.IsNullOrEmpty(HttpContext.User.Identity.Name)) ?
+                        HttpContext.User.Identity.Name : string.Empty;            
         }
     }
 }

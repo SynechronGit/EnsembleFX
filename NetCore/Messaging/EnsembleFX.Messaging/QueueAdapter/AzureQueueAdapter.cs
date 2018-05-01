@@ -1,10 +1,12 @@
 ﻿using EnsembleFX.Helper;
+using EnsembleFX.Logging;
 using EnsembleFX.Messaging.Bus;
 using EnsembleFX.Messaging.Configuration;
 using EnsembleFX.Messaging.Logging;
 using EnsembleFX.Messaging.Logging;
 using EnsembleFX.Messaging.QueueAdapter;
 using EnsembleFX.Messaging.Service;
+using Microsoft.AspNetCore.Http;
 using Microsoft.ServiceBus.Messaging;
 using System;
 using System.Collections.Generic;
@@ -32,26 +34,26 @@ namespace EnsembleFX.Messaging.QueueAdapter
         readonly IBusLogger _logger;
         IAsyncResult _asyncStart;
 
-        public AzureQueueAdapter(IConfigurationFactory configFactory, string configurationName, IBusLogger logger)
+        public AzureQueueAdapter(IConfigurationFactory configFactory, string configurationName, IBusLogger logger, ILogController logController, IHttpContextAccessor httpContextAccessor)
         {
             this._configuration = configFactory.GetConfiguration<AzureQueueConfiguration>("AzureQueueConfiguration/Queue");
-            _azureQueueHelper = new AzureQueueHelper();
+            _azureQueueHelper = new AzureQueueHelper(logController, httpContextAccessor);
             _azureQueueHelper.TopicName = _configuration.name;
             this._logger = logger;
         }
 
-        public AzureQueueAdapter(AzureQueueConfiguration configuration, IBusLogger logger)
+        public AzureQueueAdapter(AzureQueueConfiguration configuration, IBusLogger logger, ILogController logController, IHttpContextAccessor httpContextAccessor)
         {
             this._configuration = configuration;
-            _azureQueueHelper = new AzureQueueHelper();
+            _azureQueueHelper = new AzureQueueHelper(logController, httpContextAccessor);
             _azureQueueHelper.TopicName = _configuration.name;
             this._logger = logger;
         }
 
-        public AzureQueueAdapter(IConfigurationFactory configFactory, string configurationName, IBusLogger logger, string topicName)
+        public AzureQueueAdapter(IConfigurationFactory configFactory, string configurationName, IBusLogger logger, string topicName, ILogController logController, IHttpContextAccessor httpContextAccessor)
         {
             this._configuration = configFactory.GetConfiguration<AzureQueueConfiguration>("AzureQueueConfiguration/Queue");
-            _azureQueueHelper = new AzureQueueHelper();
+            _azureQueueHelper = new AzureQueueHelper(logController, httpContextAccessor);
             _azureQueueHelper.TopicName = topicName;
             this._logger = logger;
         }

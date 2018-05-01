@@ -5,6 +5,7 @@ using EnsembleFX.Messaging.Bus;
 using EnsembleFX.Messaging.Model;
 using EnsembleFX.Messaging.Model.Enums;
 using EnsembleFX.Repository;
+using Microsoft.AspNetCore.Http;
 //using EnsembleFX.Shared;
 //using Microsoft.Azure;
 using Microsoft.ServiceBus;
@@ -25,6 +26,8 @@ namespace EnsembleFX.Helper
 {
     public class AzureQueueHelper
     {
+
+        private IHttpContextAccessor httpContextAccessor;       
 
         #region Internal Members
 
@@ -66,16 +69,18 @@ namespace EnsembleFX.Helper
         /// <summary>
         /// Constructor
         /// </summary>
-        public AzureQueueHelper()
+        public AzureQueueHelper(ILogController logController, IHttpContextAccessor httpContextAccessor)
         {
-            _dbManageFileTrigger = new DBManager<FileTrigger>(fileTriggerCollectionName).Instance;
-            _dbManageEmailTrigger = new DBManager<EmailTrigger>(emailTriggerCollectionName).Instance;
-            _dbManageTimeTrigger = new DBManager<TimeTrigger>(timeTriggerCollectionName).Instance;
-            _dbIFTTTRepository = new DBManager<IFTTTApplet>(iFTTTCollectionName).Instance;
-            _workflowInstanceDbRepository = new DBManager<WorkflowInstance>(workflowInstanceCollectionName).Instance;
-            _workflowDbRepository = new DBManager<Workflow>(workflowCollectionName).Instance;
-            _agentConfigurationDBRepository = new DBManager<AgentConfiguration>(agentConfigurationcollectionName).Instance;
-            _LogManager = new LogManager();
+            this.httpContextAccessor = httpContextAccessor;
+
+            _dbManageFileTrigger = new DBManager<FileTrigger>(fileTriggerCollectionName, logController).Instance;
+            _dbManageEmailTrigger = new DBManager<EmailTrigger>(emailTriggerCollectionName, logController).Instance;
+            _dbManageTimeTrigger = new DBManager<TimeTrigger>(timeTriggerCollectionName, logController).Instance;
+            _dbIFTTTRepository = new DBManager<IFTTTApplet>(iFTTTCollectionName, logController).Instance;
+            _workflowInstanceDbRepository = new DBManager<WorkflowInstance>(workflowInstanceCollectionName, logController).Instance;
+            _workflowDbRepository = new DBManager<Workflow>(workflowCollectionName, logController).Instance;
+            _agentConfigurationDBRepository = new DBManager<AgentConfiguration>(agentConfigurationcollectionName, logController).Instance;
+            _LogManager = new LogManager(logController);
         }
 
         #endregion
@@ -513,8 +518,9 @@ namespace EnsembleFX.Helper
             LogModel logmodel = new LogModel();
             logmodel.StackTrace = stacktrace;
             logmodel.Message = message;
-            logmodel.UserName = HttpContext.Current.User.Identity.Name;
-            logmodel.Url = HttpContext.Current.Request.Url.AbsoluteUri;
+            logmodel.UserName = this.httpContextAccessor.HttpContext.User.Identity.Name;
+            //TODO: Get Url from HttpContext
+            //logmodel.Url = this.httpContextAccessor.HttpContext.Request.Url.AbsoluteUri;
 
             return logmodel;
         }
