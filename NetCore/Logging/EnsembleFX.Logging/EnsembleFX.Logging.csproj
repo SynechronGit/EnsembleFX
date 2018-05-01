@@ -1,19 +1,20 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\EnsembleFX.Logging.Model\EnsembleFX.Logging.Model.csproj" />
+    <ProjectReference Include="..\..\Core\EnsembleFX.Core\EnsembleFX.Core.csproj" />
+    <ProjectReference Include="..\..\Repository\EnsembleFX.Repository\EnsembleFX.Repository.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="log4net" Version="2.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.0.2" />
+     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.4.1" />
+     <PackageReference Include="WindowsAzure.Storage" Version="9.1.1" />
+  </ItemGroup>
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Folder Include="wwwroot\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.6" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.3" />
-  </ItemGroup>
 
 </Project>
