@@ -10,4 +10,8 @@
     <PackageReference Include="WindowsAzure.ServiceBus" Version="4.1.9" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\EnsembleFX.Messaging.Model\EnsembleFX.Messaging.Model.csproj" />
+  </ItemGroup>
+
 </Project>
