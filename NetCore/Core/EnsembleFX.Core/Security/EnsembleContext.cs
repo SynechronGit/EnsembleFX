@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -7,71 +8,78 @@ using System.Web;
 namespace EnsembleFX.Core.Security
 {
 
-    //To Do : HttpContext replancement for .NET Core. Uncomment commented code and remove all return null statement.
+   
     public class EnsembleContext
     {
-        public static string Email
+        private IHttpContextAccessor _contextAccessor;
+
+        public EnsembleContext(IHttpContextAccessor contextAccessor)
+        {
+            _contextAccessor = contextAccessor;
+        }
+
+        private HttpContext Context { get { return _contextAccessor.HttpContext; } }
+        public string Email
         {
             get
             {
-                //return ((ClaimsIdentity)HttpContext.Current.GetOwinContext().Authentication.User.Identity).FindFirst(ClaimTypes.Email).Value; //To Do: .NET Core compatible replacemnt.
-                return null;
+                return ((ClaimsIdentity)Context.User.Identity).FindFirst(ClaimTypes.Email).Value; 
             }
         }
-        public static string Name
+        public string Name
         {
             get
             {
-                return null;
-                //var claim = ((ClaimsIdentity)HttpContext.Current.GetOwinContext().Authentication.User.Identity).FindFirst(ClaimTypes.Name); //To Do: .NET Core compatible replacemnt.
                
-                //if (null != claim)
-                //{
-                //    return claim.Value;
-                //}
-                //else
-                //{
-                //    return string.Empty;
-                //}
+                var claim = ((ClaimsIdentity)Context.User.Identity).FindFirst(ClaimTypes.Name); 
+
+                if (null != claim)
+                {
+                    return claim.Value;
+                }
+                else
+                {
+                    return string.Empty;
+                }
 
             }
         }
-        public static string UserId
+        public string UserId
         {
             get
             {
-                //return ((ClaimsIdentity)HttpContext.Current.GetOwinContext().Authentication.User.Identity).FindFirst(ClaimTypes.NameIdentifier).Value; //To Do: .NET Core compatible replacemnt.
-                return null;
+                return ((ClaimsIdentity)Context.User.Identity).FindFirst(ClaimTypes.NameIdentifier).Value; 
+               
             }
         }
-        public static string ApplicationIdentifier
+        public string ApplicationIdentifier
         {
             get
             {
-                //return ((ClaimsIdentity)HttpContext.Current.GetOwinContext().Authentication.User.Identity).FindFirst("ApplicationIdentifier").Value;//To Do: .NET Core compatible replacemnt.
-                return null;
+                return ((ClaimsIdentity)Context.User.Identity).FindFirst("ApplicationIdentifier").Value;
+               
             }
         }
-        public static string EnvironmentIdentifier
+        public string EnvironmentIdentifier
         {
             get
             {
-                //return ((ClaimsIdentity)HttpContext.Current.GetOwinContext().Authentication.User.Identity).FindFirst("EnvironmentIdentifier").Value;//To Do: .NET Core compatible replacemnt.
-                return null;
+                return ((ClaimsIdentity)Context.User.Identity).FindFirst("EnvironmentIdentifier").Value;
+              
             }
         }
 
-        public static string ClientId
+        public string ClientId
         {
             get
             {
-                return null;
-                //var clientID = ((ClaimsIdentity)HttpContext.Current.GetOwinContext().Authentication.User.Identity).FindFirst("ClientId"); //To Do: .NET Core compatible replacemnt.
 
-                //if (clientID != null)
-                //    return clientID.Value;
+                var clientID = ((ClaimsIdentity)Context.User.Identity).FindFirst("ClientId"); 
 
-                //return "";
+                if (clientID != null)
+                    return clientID.Value;
+
+                return "";
             }
         }
     }
