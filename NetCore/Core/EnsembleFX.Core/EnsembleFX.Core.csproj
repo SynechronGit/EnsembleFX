@@ -5,8 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Dependency\**" />
+    <EmbeddedResource Remove="Dependency\**" />
+    <None Remove="Dependency\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Configuration\" />
-    <Folder Include="Dependency\" />
     <Folder Include="Exceptions\" />
     <Folder Include="Helpers\" />
     <Folder Include="Serialization\" />
@@ -15,6 +20,8 @@
 
   <ItemGroup>
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.4.1" />
+    <PackageReference Include="System.ServiceModel.Duplex" Version="4.4.2" />
+    <PackageReference Include="Unity.NetCore" Version="4.0.3" />
   </ItemGroup>
 
 </Project>
