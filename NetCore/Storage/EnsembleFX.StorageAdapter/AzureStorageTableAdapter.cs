@@ -31,7 +31,7 @@ namespace EnsembleFX.StorageAdapter
         }
 
         public AzureStorageTableAdapter(string tableName)
-        {
+        {       
             CloudConnection = System.Configuration.ConfigurationManager.ConnectionStrings["AzureStorageAccount"].ConnectionString;
             CloudContainer = System.Configuration.ConfigurationManager.AppSettings["cloudContainer"];
             Initialize(tableName);
@@ -54,7 +54,7 @@ namespace EnsembleFX.StorageAdapter
             }
         }
 
-        public bool InsertTable<T>(string tableName, T entity)
+        public bool InsertTable<T1>(string tableName, T1 entity)
         {
             // Create the CloudTable object that represents the generic table.
             //CloudTable table = tableClient.GetTableReference(tableName);
@@ -73,11 +73,11 @@ namespace EnsembleFX.StorageAdapter
 
         //(PagingFiltering criteria, int pageNo, int pageSize, out long totalCount)
         //public IList<T> SearchFor<T>(string tableName, T entity, PagingFiltering criteria, int pageNo, int pageSize, out long totalCount)
-        public TableQuery<T> SearchFor<T>(CloudTable table, PagingFiltering criteria, int pageNo, int pageSize, out long totalCount)
+        public TableQuery<T1> SearchFor<T1>(CloudTable table, PagingFiltering criteria, int pageNo, int pageSize, out long totalCount) where T1 : ITableEntity, new()
         {
             var resultItems = new List<DynamicTableEntity>();
-            List<T> results = new List<T>();
-            TableQuery<T> tableQuery = new TableQuery<T>();
+            List<T1> results = new List<T1>();
+            TableQuery<T1> tableQuery = new TableQuery<T1>();
 
             if (null != criteria.filter)
             {
@@ -109,7 +109,7 @@ namespace EnsembleFX.StorageAdapter
                     }
 
 
-                    tableQuery = new TableQuery<T>().Where(filter);
+                    tableQuery = new TableQuery<T1>().Where(filter);
 
 
 
