@@ -9,7 +9,6 @@ namespace EnsembleFX.Serialization
     {
         string Serialize(object instance);
         object Deserialize(string serializedInstance, string messageTypeName);
-
         T Deserialize<T>(Uri locationURL);
         T Deserialize<T>(string serializedObject);
         T Deserialize<T>(System.IO.Stream serializedObject);

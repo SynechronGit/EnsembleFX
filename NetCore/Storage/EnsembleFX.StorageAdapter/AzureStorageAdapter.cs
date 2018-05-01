@@ -25,7 +25,8 @@ namespace EnsembleFX.StorageAdapter
         private CloudBlobClient blobClient;
         private CloudBlobContainer blobContainer;
         private CloudBlockBlob blockBlob;
-        private double sharedAccessTokenExpiryTimeInMinutes = string.IsNullOrEmpty(System.Configuration.ConfigurationManager.AppSettings["SharedAccessTokenExpiryTimeInMinutes"]) ? 2 : double.Parse(System.Configuration.ConfigurationManager.AppSettings["SharedAccessTokenExpiryTimeInMinutes"]);
+        private double sharedAccessTokenExpiryTimeInMinutes = 0;
+            //string.IsNullOrEmpty(System.Configuration.ConfigurationManager.AppSettings["SharedAccessTokenExpiryTimeInMinutes"]) ? 2 : double.Parse(System.Configuration.ConfigurationManager.AppSettings["SharedAccessTokenExpiryTimeInMinutes"]);
 
         public CloudBlobContainer BlobContainer { get { return blobContainer; } }
         #endregion
@@ -34,8 +35,8 @@ namespace EnsembleFX.StorageAdapter
 
         public AzureStorageAdapter()
         {
-            CloudConnection = System.Configuration.ConfigurationManager.ConnectionStrings["AzureStorageAccount"].ConnectionString;
-            CloudContainer = System.Configuration.ConfigurationManager.AppSettings["cloudContainer"];
+            //CloudConnection = System.Configuration.ConfigurationManager.ConnectionStrings["AzureStorageAccount"].ConnectionString;
+            //CloudContainer = System.Configuration.ConfigurationManager.AppSettings["cloudContainer"];
             Initialize();
         }
 
