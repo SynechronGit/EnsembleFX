@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using EnsembleFX.StorageAdapter.Model;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.IO;

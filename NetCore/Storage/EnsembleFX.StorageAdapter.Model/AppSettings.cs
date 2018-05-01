@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EnsembleFX.StorageAdapter
+namespace EnsembleFX.StorageAdapter.Model
 {
     public class AppSettings
     {

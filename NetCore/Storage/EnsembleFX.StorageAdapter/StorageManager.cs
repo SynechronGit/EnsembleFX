@@ -1,4 +1,5 @@
 ﻿
+using EnsembleFX.StorageAdapter.Model;
 using Microsoft.Extensions.Options;
 
 namespace EnsembleFX.StorageAdapter
@@ -32,9 +33,5 @@ namespace EnsembleFX.StorageAdapter
         }
     }
 
-    public enum StorageType
-    {
-        AzureStorage,
-        LocalFileStorage
-    }
+   
 }
