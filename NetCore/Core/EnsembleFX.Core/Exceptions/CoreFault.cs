@@ -76,7 +76,7 @@ namespace EnsembleFX.Core.Exceptions
         public static FaultException<T> CreateFaultException<T>(Exception ex, string source, string message, bool isFatal) where T : CoreFault, new()
         {
             T fault = CreateFaultFromException<T>(ex, source, message, isFatal);
-            return new FaultException<T>(fault, fault.Reason);
+            return new FaultException<T>(fault, fault.Reason, null, string.Empty );// Fault code null and action string.empty passed while converting it to .NET core.
         }
 
 
