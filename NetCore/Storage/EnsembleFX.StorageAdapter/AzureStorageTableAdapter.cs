@@ -28,9 +28,9 @@ namespace EnsembleFX.StorageAdapter
 
         #region Constructors
 
-        //public AzureStorageTableAdapter() : this(typeof(T).Name)
-        //{
-        //}
+        public AzureStorageTableAdapter(IOptions<AppSettings> appSettings) : this(typeof(T).Name, appSettings)
+        {
+        }
 
         public AzureStorageTableAdapter(string tableName, IOptions<AppSettings> appSettings)
         {
@@ -268,7 +268,7 @@ namespace EnsembleFX.StorageAdapter
             //    }
             //}
 
-            TableContinuationToken continuationToken = new TableContinuationToken();            
+            TableContinuationToken continuationToken = new TableContinuationToken();
             var items = _cloudTable.ExecuteQuerySegmentedAsync(fluentQuery, continuationToken).Result.Skip(skipCount).Take(takeCount);
             alllItems.AddRange(items);
             return alllItems;
