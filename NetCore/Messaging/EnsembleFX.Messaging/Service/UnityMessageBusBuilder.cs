@@ -39,7 +39,7 @@ namespace EnsembleFX.Messaging.Service
             UnityConfigurationSection section = (UnityConfigurationSection)ConfigurationManager.GetSection("unity");
             section.Configure(_container, "default");
 
-            _container.RegisterTypes(
+            _container.RegisterType(
                       AllClasses.FromLoadedAssemblies().Where(t => !string.IsNullOrEmpty(t.Namespace) &&
                           (t.Namespace.StartsWith("EnsembleFX") || t.Namespace.StartsWith("EnsembleFX.Runtime.Api") || t.Namespace.StartsWith("Ensemble.")) && (t.Name.EndsWith("Manager") || t.Name.EndsWith("Repository"))),
                       WithMappings.FromMatchingInterface,

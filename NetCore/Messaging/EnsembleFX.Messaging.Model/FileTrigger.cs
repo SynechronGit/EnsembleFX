@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EnsembleFX.Messaging.Model.Enums;
+using System;
 
 namespace EnsembleFX.Messaging.Model
 {

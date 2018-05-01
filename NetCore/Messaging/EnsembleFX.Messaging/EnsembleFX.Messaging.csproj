@@ -9,6 +9,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="ServiceStack" Version="5.1.0" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.4.1" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.4.3" />
     <PackageReference Include="Unity" Version="5.8.6" />
     <PackageReference Include="Unity.Configuration" Version="5.2.2" />
     <PackageReference Include="WindowsAzure.ServiceBus" Version="4.1.9" />
