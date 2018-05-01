@@ -1,4 +1,6 @@
-﻿//TODO:: Need to solved ApiAuthorization errors
+﻿//TODO ::   
+// AuthorizeAttribute is under the System.Web.Http Assembly which is not exist in the .net core
+// we need to find alternative of System.Web.Http Assembly
 
 //using EnsembleFX.Core.Security;
 //using EnsembleFX.Shared;
