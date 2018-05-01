@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Options;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,11 +11,11 @@ namespace EnsembleFX.StorageAdapter
     public class LocalFileStorageAdapter : IStorageAdapter
     {
 
-        internal string StoragePath;
+        internal string StoragePath = string.Empty;
 
-        public LocalFileStorageAdapter()
-        {            
-            //StoragePath = System.Configuration.ConfigurationManager.AppSettings["storagePath"];
+        public LocalFileStorageAdapter(IOptions<AppSettings> appSettings)
+        {
+            StoragePath = appSettings.Value.StoragePath;
             Initialize();
         }
 
@@ -90,19 +91,6 @@ namespace EnsembleFX.StorageAdapter
             return contentStreamText;
         }
 
-        public double SharedAccessExpiryTimeInMinutes
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-
-            set
-            {
-                throw new NotImplementedException();
-            }
-
-        }
         public string GetSASContainerToken()
         {
             throw new NotImplementedException();
