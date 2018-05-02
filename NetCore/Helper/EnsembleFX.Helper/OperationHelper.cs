@@ -5,24 +5,25 @@ using System.Web;
 using Newtonsoft.Json;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
-using  Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 
 namespace EnsembleFX.Helper
 {
-    public class OperationHelper
+    public class OperationHelper : IOperationHelper
     {
         private IHttpContextAccessor httpContextAccessor;
-        public OperationHelper(IHttpContextAccessor httpContextAccessor){
+        public OperationHelper(IHttpContextAccessor httpContextAccessor)
+        {
             this.httpContextAccessor = httpContextAccessor;
         }
 
-        public static string ReadRequestAsString(object entity)
+        public string ReadRequestAsString(object entity)
         {
             return JsonConvert.SerializeObject(entity);
         }
 
 
-        public static List<TEntity> ConvertDocumentToList<TEntity>(IEnumerable<BsonDocument> documents)
+        public List<TEntity> ConvertDocumentToList<TEntity>(IEnumerable<BsonDocument> documents)
         {
             try
             {
@@ -39,20 +40,21 @@ namespace EnsembleFX.Helper
             {
                 throw ex;
             }
-            
+
         }
 
         /// <summary>
         /// Get logged in Username
         /// </summary>
         /// <returns>logged in Username</returns>
-        public string GetUserName() {
+        public string GetUserName()
+        {
             var HttpContext = this.httpContextAccessor.HttpContext;
 
             return (HttpContext.User != null &&
                     HttpContext.User.Identity != null &&
                     !string.IsNullOrEmpty(HttpContext.User.Identity.Name)) ?
-                        HttpContext.User.Identity.Name : string.Empty;            
+                        HttpContext.User.Identity.Name : string.Empty;
         }
     }
 }
