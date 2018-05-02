@@ -1,5 +1,5 @@
 ﻿
-namespace EnsembleFX.Configuration.Model
+namespace EnsembleFX.Communication.Model
 {
     using System.Configuration;
     public sealed class EmailConfigurationSection : ConfigurationSection

@@ -1,6 +1,6 @@
 ﻿
 
-namespace EnsembleFX.Configuration.Model
+namespace EnsembleFX.Communication.Model
 {
     using System.Runtime.Serialization;
 

@@ -1,21 +1,20 @@
 ﻿
-namespace EnsembleFX.Configuration.Model
+namespace EnsembleFX.Communication.Model
 {
     using System;
     using System.Configuration;
-
-    public class MessageBCC : ConfigurationElement
+    public class MessageSubject : ConfigurationElement
     {
-        [ConfigurationProperty("ids")]
-        public String Ids
+        [ConfigurationProperty("text")]
+        public String Text
         {
             get
             {
-                return (String)this["ids"];
+                return (String)this["text"];
             }
             set
             {
-                this["ids"] = value;
+                this["text"] = value;
             }
         }
 

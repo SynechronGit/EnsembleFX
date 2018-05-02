@@ -1,8 +1,20 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="BlackListElement.cs" />
+    <Compile Remove="EmailConfiguration.cs" />
+    <Compile Remove="EmailConfigurationSection.cs" />
+    <Compile Remove="MessageBCC.cs" />
+    <Compile Remove="MessageCC.cs" />
+    <Compile Remove="MessageElement.cs" />
+    <Compile Remove="MessageSubject.cs" />
+    <Compile Remove="MessageTo.cs" />
+    <Compile Remove="WhiteListElement.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="System.Collections.NonGeneric" Version="4.3.0" />

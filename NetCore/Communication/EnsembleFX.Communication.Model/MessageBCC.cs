@@ -1,9 +1,10 @@
 ﻿
-namespace EnsembleFX.Configuration.Model
+namespace EnsembleFX.Communication.Model
 {
     using System;
     using System.Configuration;
-    public class MessageCC : ConfigurationElement
+
+    public class MessageBCC : ConfigurationElement
     {
         [ConfigurationProperty("ids")]
         public String Ids
