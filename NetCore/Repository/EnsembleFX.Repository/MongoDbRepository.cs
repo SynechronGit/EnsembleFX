@@ -500,7 +500,7 @@ namespace EnsembleFX.Repository
         {
             try
             {
-                string strEntity = OperationHelper.ReadRequestAsString(entity);
+                string strEntity = CommonHelper.ReadRequestAsString(entity);
                 BsonDocument entityDocument = BsonSerializer.Deserialize<BsonDocument>(strEntity);
 
                 bsonCollection.InsertOneAsync(entityDocument);
@@ -519,7 +519,7 @@ namespace EnsembleFX.Repository
         {
             try
             {
-                string strEntity = OperationHelper.ReadRequestAsString(entity);
+                string strEntity = CommonHelper.ReadRequestAsString(entity);
                 BsonDocument entityDocument = BsonSerializer.Deserialize<BsonDocument>(strEntity);
                 List<BsonElement> lstElement = entityDocument.ToBsonDocument().Elements.ToList();
                 var id = (lstElement.Where(x => x.Name == "_id").FirstOrDefault().Value);
