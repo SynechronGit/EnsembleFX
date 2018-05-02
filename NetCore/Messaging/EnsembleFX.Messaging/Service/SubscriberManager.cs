@@ -1,4 +1,5 @@
-﻿using EnsembleFX.Messaging.Logging;
+﻿using EnsembleFX.Logging;
+using EnsembleFX.Messaging.Logging;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -20,6 +21,12 @@ namespace EnsembleFX.Messaging.Service
     /// </summary>
     public class SubscriberManager : ISubscriberManager
     {
+        ILogController logController;
+        public SubscriberManager(ILogController logController)
+        {
+            this.logController = logController;
+        }
+
         #region Public Members
 
         const int MaxRetries = 10;
@@ -36,10 +43,11 @@ namespace EnsembleFX.Messaging.Service
         /// </summary>
         /// <param name="subscribers">The subscribers.</param>
         /// <param name="logger">The logger.</param>
-        public SubscriberManager(IMessageSubscriber[] subscribers, IBusLogger logger)
+        public SubscriberManager(IMessageSubscriber[] subscribers, IBusLogger logger, ILogController logController)
         {
             this.subscribers = subscribers;
             this.logger = logger;
+            this.logController = logController;
         }
 
         /// <summary>
@@ -81,7 +89,7 @@ namespace EnsembleFX.Messaging.Service
         /// <param name="subscriberType">Type of the subscriber.</param>
         public void RegisterSubscriber(string subscriberType)
         {
-            IMessageBusBuilder builder = new MessageBusBuilder();
+            IMessageBusBuilder builder = new MessageBusBuilder(this.logController);
             IMessageSubscriber subscriber = builder.BuildSubscriber(subscriberType);
             if (subscriber != null)
             {

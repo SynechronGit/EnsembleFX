@@ -1,4 +1,5 @@
-﻿using EnsembleFX.Messaging.Configuration;
+﻿using EnsembleFX.Logging;
+using EnsembleFX.Messaging.Configuration;
 using EnsembleFX.Messaging.Exception;
 using EnsembleFX.Messaging.Serialization;
 using EnsembleFX.Messaging.Service;
@@ -16,6 +17,11 @@ namespace EnsembleFX.Messaging.Logging
 {
     public class SqlBusLogger : IBusLogger
     {
+        ILogController logController;
+        public SqlBusLogger(ILogController logController)
+        {
+            this.logController = logController;
+        }
         #region Public Methods
 
         public void MessagingPublisherLog(IMessageEnvelope envelope, string publisherType, bool isSuccess, string message, System.Exception occurredException)
@@ -633,15 +639,15 @@ namespace EnsembleFX.Messaging.Logging
             return myDataSet;
         }
 
-        private static SqlConnection GetSqlConnection()
+        private SqlConnection GetSqlConnection()
         {
-            IMessageBusBuilder messageBuilder = new MessageBusBuilder();
+            IMessageBusBuilder messageBuilder = new MessageBusBuilder(this.logController);
             IConfigurationFactory configFactory = messageBuilder.BuildConfigurationFactory();
             SqlConnection sqlConnection = new SqlConnection(System.Configuration.ConfigurationManager.ConnectionStrings["PasdcContext"].ToString());
             return sqlConnection;
         }
 
-        private static void AddData(string updateQuery, IEnumerable<SqlParameter> sqlParameters)
+        private void AddData(string updateQuery, IEnumerable<SqlParameter> sqlParameters)
         {
             using (SqlConnection sqlConnection = GetSqlConnection())
             {

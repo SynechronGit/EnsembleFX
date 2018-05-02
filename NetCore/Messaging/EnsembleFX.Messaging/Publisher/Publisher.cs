@@ -1,4 +1,5 @@
-﻿using EnsembleFX.Messaging.Logging;
+﻿using EnsembleFX.Logging;
+using EnsembleFX.Messaging.Logging;
 using EnsembleFX.Messaging.QueueAdapter;
 using EnsembleFX.Messaging.Serialization;
 using EnsembleFX.Messaging.Service;
@@ -13,6 +14,8 @@ namespace EnsembleFX.Messaging.Publisher
 {
     public class Publisher<T> : MessageBusBuilder where T : IMessage
     {
+        private ILogController logController;
+
         #region Private Properties
         IQueueAdapter _queueManager;
         #endregion
@@ -30,11 +33,12 @@ namespace EnsembleFX.Messaging.Publisher
         #endregion
 
         #region Constructor
-        public Publisher()
+        public Publisher(ILogController logController) : base(logController)
         {
             _queueManager = this.BuildDefaultQueueAdapter();
             logger = this.BuildLogger();
             _queueManager.Initialize();
+            this.logController = logController;
         }
 
         /// <summary>
@@ -42,11 +46,12 @@ namespace EnsembleFX.Messaging.Publisher
         /// </summary>
         /// <param name="queueManager">The queue manager.</param>
         /// <param name="logger">The logger.</param>
-        public Publisher(IQueueAdapter queueManager, IBusLogger logger)
+        public Publisher(IQueueAdapter queueManager, IBusLogger logger, ILogController logController) : base(logController)
         {
             this.logger = logger;
             this._queueManager = queueManager;
             queueManager.Initialize();
+            this.logController = logController;
         }
         #endregion
 
@@ -93,7 +98,7 @@ namespace EnsembleFX.Messaging.Publisher
         /// <param name="message">The message.</param>
         public virtual void SendMessage(T message, string azureServiceBusTopicName)
         {
-            _queueManager =  BuildAzureQueueAdapterForTopic(azureServiceBusTopicName);
+            _queueManager = BuildAzureQueueAdapterForTopic(azureServiceBusTopicName);
 
             var envelope = new MessageEnvelope(message);
             SendEnvelope(envelope);

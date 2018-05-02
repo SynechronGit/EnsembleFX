@@ -69,9 +69,22 @@ namespace EnsembleFX.Helper
         /// <summary>
         /// Constructor
         /// </summary>
-        public AzureQueueHelper(ILogController logController, IHttpContextAccessor httpContextAccessor)
+        //public AzureQueueHelper(ILogController logController)
+        //{
+        //    //this.httpContextAccessor = httpContextAccessor;
+
+        //    _dbManageFileTrigger = new DBManager<FileTrigger>(fileTriggerCollectionName, logController).Instance;
+        //    _dbManageEmailTrigger = new DBManager<EmailTrigger>(emailTriggerCollectionName, logController).Instance;
+        //    _dbManageTimeTrigger = new DBManager<TimeTrigger>(timeTriggerCollectionName, logController).Instance;
+        //    _dbIFTTTRepository = new DBManager<IFTTTApplet>(iFTTTCollectionName, logController).Instance;
+        //    _workflowInstanceDbRepository = new DBManager<WorkflowInstance>(workflowInstanceCollectionName, logController).Instance;
+        //    _workflowDbRepository = new DBManager<Workflow>(workflowCollectionName, logController).Instance;
+        //    _agentConfigurationDBRepository = new DBManager<AgentConfiguration>(agentConfigurationcollectionName, logController).Instance;
+        //    _LogManager = new LogManager(logController);
+        //}
+        public AzureQueueHelper(ILogController logController)
         {
-            this.httpContextAccessor = httpContextAccessor;
+            //this.httpContextAccessor = httpContextAccessor;
 
             _dbManageFileTrigger = new DBManager<FileTrigger>(fileTriggerCollectionName, logController).Instance;
             _dbManageEmailTrigger = new DBManager<EmailTrigger>(emailTriggerCollectionName, logController).Instance;
@@ -382,7 +395,8 @@ namespace EnsembleFX.Helper
                 }
                 catch (Exception ex)
                 {
-                    var logModel = CreateLogModel(ex.Message, ex.StackTrace);
+                    //TODO: Pass username and requestAbsoluteUrl from httpcontext here
+                    var logModel = CreateLogModel(ex.Message, ex.StackTrace, "", "");
                     _LogManager.LogMessage(logModel, LogLevel.Error);
 
                 }
@@ -513,14 +527,18 @@ namespace EnsembleFX.Helper
             return generic.Invoke(_brokeredMessage, null);
         }
 
-        private LogModel CreateLogModel(string message,string stacktrace)
+        private LogModel CreateLogModel(string message,string stacktrace, string username, string requestAbsoluteUrl)
         {            
             LogModel logmodel = new LogModel();
             logmodel.StackTrace = stacktrace;
             logmodel.Message = message;
-            logmodel.UserName = this.httpContextAccessor.HttpContext.User.Identity.Name;
+            //TODO: Need to pass with parameter
+            //logmodel.UserName = this.httpContextAccessor.HttpContext.User.Identity.Name;
+            logmodel.UserName = username;
+
             //TODO: Get Url from HttpContext
             //logmodel.Url = this.httpContextAccessor.HttpContext.Request.Url.AbsoluteUri;
+            logmodel.Url = requestAbsoluteUrl;
 
             return logmodel;
         }

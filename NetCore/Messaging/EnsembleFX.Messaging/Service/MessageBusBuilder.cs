@@ -16,11 +16,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EnsembleFX.Logging;
 
 namespace EnsembleFX.Messaging.Service
 {
     public class MessageBusBuilder : IMessageBusBuilder
     {
+        private ILogController logController;
+        public MessageBusBuilder(ILogController logController)
+        {
+            this.logController = logController;
+        }
         #region Public Methods
 
         /// <summary>
@@ -71,7 +77,7 @@ namespace EnsembleFX.Messaging.Service
         public ISubscriberManager BuildSubscriberManager()
         {
             IBusLogger logger = BuildLogger();
-            ISubscriberManager subscriberManager = new SubscriberManager(BuildSubscribers().ToArray(), logger);
+            ISubscriberManager subscriberManager = new SubscriberManager(BuildSubscribers().ToArray(), logger, this.logController);
             return subscriberManager;
         }
 
@@ -97,11 +103,11 @@ namespace EnsembleFX.Messaging.Service
         {
             try
             {
-                return ServiceLocator.Current != null ? ServiceLocator.Current.GetInstance<IBusLogger>() : new SqlBusLogger();
+                return ServiceLocator.Current != null ? ServiceLocator.Current.GetInstance<IBusLogger>() : new SqlBusLogger(this.logController);
             }
             catch (System.Exception exp)
             {
-                return new SqlBusLogger();
+                return new SqlBusLogger(this.logController);
             }
         }
         /// <summary>
@@ -139,20 +145,20 @@ namespace EnsembleFX.Messaging.Service
         /// <returns></returns>
         protected IQueueAdapter BuildCommandQueueAdapter()
         {
-            IBusLogger logger = new SqlBusLogger();
+            IBusLogger logger = new SqlBusLogger(this.logController);
             return new SqlQueueAdapter(BuildConfigurationFactory(), "Command.Queue.Config.xml", logger);
         }
 
         protected IQueueAdapter BuildAzureQueueAdapterForTopic(string azureServiceBusTopicName)
         {
-            IBusLogger logger = new SqlBusLogger();
-            return new AzureQueueAdapter(BuildConfigurationFactory(), "Not_In_Use.xml", logger, azureServiceBusTopicName);
+            IBusLogger logger = new SqlBusLogger(this.logController);
+            return new AzureQueueAdapter(BuildConfigurationFactory(), "Not_In_Use.xml", logger, azureServiceBusTopicName, this.logController);
         }
 
         protected IQueueAdapter BuildAzureQueueAdapter()
         {
-            IBusLogger logger = new SqlBusLogger();
-            return new AzureQueueAdapter(BuildConfigurationFactory(), "Not_In_Use.xml", logger);
+            IBusLogger logger = new SqlBusLogger(this.logController);
+            return new AzureQueueAdapter(BuildConfigurationFactory(), "Not_In_Use.xml", logger, this.logController);
         }
 
         #endregion
