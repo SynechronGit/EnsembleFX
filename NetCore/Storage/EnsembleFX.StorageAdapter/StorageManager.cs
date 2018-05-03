@@ -9,7 +9,7 @@ namespace EnsembleFX.StorageAdapter
     {
         private IStorageAdapter _storageAdapter;
 
-        public StorageManager(string storageType, IOptions<StorageAdapterAppSetting> appSettings)
+        public StorageManager(string storageType, IOptions<StorageAdapterAppSettings> appSettings)
         {
             if (!string.IsNullOrEmpty(storageType))
             {

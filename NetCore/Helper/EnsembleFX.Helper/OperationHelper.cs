@@ -30,5 +30,29 @@ namespace EnsembleFX.Helper
                     !string.IsNullOrEmpty(HttpContext.User.Identity.Name)) ?
                         HttpContext.User.Identity.Name : string.Empty;
         }
+
+        public string ReadRequestAsString(object entity)
+        {
+            return JsonConvert.SerializeObject(entity);
+        }
+
+        public List<TEntity> ConvertDocumentToList<TEntity>(IEnumerable<BsonDocument> documents)
+        {
+            try
+            {
+                List<TEntity> entities = new List<TEntity>();
+
+                foreach (var document in documents)
+                {
+                    TEntity data = BsonSerializer.Deserialize<TEntity>(document);
+                    entities.Add(data);
+                }
+                return entities;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }

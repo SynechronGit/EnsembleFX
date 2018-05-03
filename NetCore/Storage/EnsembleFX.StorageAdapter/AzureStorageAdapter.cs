@@ -34,7 +34,7 @@ namespace EnsembleFX.StorageAdapter
 
         #region Constructors
 
-        public AzureStorageAdapter(IOptions<StorageAdapterAppSetting> appSettings)
+        public AzureStorageAdapter(IOptions<StorageAdapterAppSettings> appSettings)
         {
             //TODO:: Need to configure the AppSettings in StartUp.cs file
             CloudConnection = appSettings.Value.AzureStorageAccount;

@@ -28,11 +28,11 @@ namespace EnsembleFX.StorageAdapter
 
         #region Constructors
 
-        public AzureStorageTableAdapter(IOptions<StorageAdapterAppSetting> appSettings) : this(typeof(T).Name, appSettings)
+        public AzureStorageTableAdapter(IOptions<StorageAdapterAppSettings> appSettings) : this(typeof(T).Name, appSettings)
         {
         }
 
-        public AzureStorageTableAdapter(string tableName, IOptions<StorageAdapterAppSetting> appSettings)
+        public AzureStorageTableAdapter(string tableName, IOptions<StorageAdapterAppSettings> appSettings)
         {
             //TODO:: Need to configure the AppSettings in StartUp.cs file
             CloudConnection = appSettings.Value.AzureStorageAccount;

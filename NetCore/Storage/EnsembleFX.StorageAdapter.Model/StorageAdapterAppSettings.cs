@@ -2,7 +2,7 @@
 
 namespace EnsembleFX.StorageAdapter.Model
 {
-    public class StorageAdapterAppSetting
+    public class StorageAdapterAppSettings
     {
         public string AzureStorageAccount { get; set; }
         public string CloudContainer { get; set; }
