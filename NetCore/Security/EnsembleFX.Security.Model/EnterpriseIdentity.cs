@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using EnsembleFX.Core.Security.Model;
 
 
-namespace EnsembleFX.Core.Security
+namespace EnsembleFX.Core.Security.Model
 {
     /// <summary>
     /// Represents implementation of IEnterpriseIdentity, purpose - ERMS authentication

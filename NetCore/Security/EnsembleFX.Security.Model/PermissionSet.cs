@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using EnsembleFX.Core.Security.Model;
 
-namespace EnsembleFX.Core.Security
+namespace EnsembleFX.Core.Security.Model
 {
     /// <summary>
     /// Represents Erms Permissions for the currently athenticated security token from ERMS
