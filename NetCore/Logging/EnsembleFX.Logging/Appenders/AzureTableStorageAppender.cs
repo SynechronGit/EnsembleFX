@@ -14,7 +14,7 @@ namespace EnsembleFX.Logging.Appenders
         private AzureStorageTableAdapter<ApplicationLogs> azureStorageTableAdapter;
         #endregion
 
-        public AzureTableStorageAppender(IOptions<AppSettings> appSettings)
+        public AzureTableStorageAppender(IOptions<StorageAdapterAppSetting> appSettings)
         {
             azureStorageTableAdapter = new AzureStorageTableAdapter<ApplicationLogs>(appSettings);
             //LogEntityType = typeof(ApplicationLogs);

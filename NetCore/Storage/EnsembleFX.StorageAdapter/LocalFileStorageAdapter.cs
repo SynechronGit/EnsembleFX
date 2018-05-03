@@ -14,7 +14,7 @@ namespace EnsembleFX.StorageAdapter
 
         internal string StoragePath = string.Empty;
 
-        public LocalFileStorageAdapter(IOptions<AppSettings> appSettings)
+        public LocalFileStorageAdapter(IOptions<StorageAdapterAppSetting> appSettings)
         {
             StoragePath = appSettings.Value.StoragePath;
             Initialize();
