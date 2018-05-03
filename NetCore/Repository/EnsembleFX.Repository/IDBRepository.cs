@@ -1,4 +1,5 @@
 ﻿//using EnsembleFX.Filters;
+using EnsembleFX.Filters;
 using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
@@ -97,9 +98,8 @@ namespace EnsembleFX.Repository
         /// <param name="pageSize"></param>
         /// <param name="totalCount"></param>
         /// <returns></returns>
-        
-        //TODO add after filter project is converted
-        //IList<TEntity> SearchFor(PagingFiltering criteria, int pageNo, int pageSize, out long totalCount);
+                
+        IList<TEntity> SearchFor(PagingFiltering criteria, int pageNo, int pageSize, out long totalCount);
         /// <summary>
         /// 
         /// </summary>
