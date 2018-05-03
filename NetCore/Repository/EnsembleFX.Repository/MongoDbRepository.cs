@@ -13,6 +13,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using EnsembleFX.Filters;
+using Newtonsoft.Json;
 
 namespace EnsembleFX.Repository
 {
@@ -500,7 +501,7 @@ namespace EnsembleFX.Repository
         {
             try
             {
-                string strEntity = CommonHelper.ReadRequestAsString(entity);
+                string strEntity = ReadRequestAsString(entity);
                 BsonDocument entityDocument = BsonSerializer.Deserialize<BsonDocument>(strEntity);
 
                 bsonCollection.InsertOneAsync(entityDocument);
@@ -519,7 +520,7 @@ namespace EnsembleFX.Repository
         {
             try
             {
-                string strEntity = CommonHelper.ReadRequestAsString(entity);
+                string strEntity = ReadRequestAsString(entity);
                 BsonDocument entityDocument = BsonSerializer.Deserialize<BsonDocument>(strEntity);
                 List<BsonElement> lstElement = entityDocument.ToBsonDocument().Elements.ToList();
                 var id = (lstElement.Where(x => x.Name == "_id").FirstOrDefault().Value);
@@ -661,6 +662,30 @@ namespace EnsembleFX.Repository
                 logManager.LogMessage("Message: " + ex.Message + Environment.NewLine + "StackTrace: " + ex.StackTrace + Environment.NewLine + "InnerException: " + ex.InnerException, "", "", LogLevel.Error);
             }
             return 0;
+        }
+
+        private string ReadRequestAsString(object entity)
+        {
+            return JsonConvert.SerializeObject(entity);
+        }
+
+        private List<TEntity> ConvertDocumentToList<TEntity>(IEnumerable<BsonDocument> documents)
+        {
+            try
+            {
+                List<TEntity> entities = new List<TEntity>();
+
+                foreach (var document in documents)
+                {
+                    TEntity data = BsonSerializer.Deserialize<TEntity>(document);
+                    entities.Add(data);
+                }
+                return entities;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
         #endregion
     }
