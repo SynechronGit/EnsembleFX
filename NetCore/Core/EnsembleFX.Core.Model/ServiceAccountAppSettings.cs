@@ -10,4 +10,6 @@ namespace EnsembleFX.Core.Model
 
         public string ServiceAccountPassword { get; set; }
     }
+
+
 }
