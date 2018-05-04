@@ -14,6 +14,8 @@ using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using EnsembleFX.Filters;
 using Newtonsoft.Json;
+using Microsoft.Extensions.Options;
+using EnsembleFX.Repository.Model;
 
 namespace EnsembleFX.Repository
 {
@@ -28,20 +30,17 @@ namespace EnsembleFX.Repository
         private IMongoCollection<TEntity> collection;
         private IMongoCollection<BsonDocument> bsonCollection;
         private string _collection;
-        private const string COSMOS_CONFIG_SECTION = "AzureCosmosDBConnectionSettings";
-        private const string COSMOS_HOST = "CosmosDB.Host";
-        private const string COSMOS_PORT = "CosmosDB.Port";
-        private const string COSMOS_DATABASE = "CosmosDB.Database";
-        private const string COSMOS_USER_NAME = "CosmosDB.UserName";
-        private const string COSMOS_PASSWORD = "CosmosDB.Password";
-        private const string COSMOS_ENCRIPTION_MECHANISM = "CosmosDB.EncriptionMechanism";
-        private const string COSMOS_ISCOSMOSDB = "IsCosmosDB";
+        private string connectionString;
+        private string databaseName;
+
         LogManager logManager;
 
-        public MongoDbRepository(string collection, ILogController logController)
+        public MongoDbRepository(string collection, ILogController logController, IOptions<ConnectionStrings> connectionStrings)
         {
             logManager = new LogManager(logController);
             _collection = collection;
+            this.connectionString = connectionStrings.Value.ConnectionString;
+            this.databaseName = connectionStrings.Value.DatabaseName;
             GetDatabase();
             GetCollection();
         }
@@ -186,7 +185,7 @@ namespace EnsembleFX.Repository
                             switch (item.Operator)
                             {
                                 case "startswith":
-                                    
+
 
                                     if (int.TryParse(item.Value, out searchval))
                                     {
@@ -214,14 +213,14 @@ namespace EnsembleFX.Repository
                                     }
                                     else
                                     {
-                                        
+
                                         if (int.TryParse(item.Value, out searchval))
                                         {
                                             if (filter == null)
                                                 filter = Builders<TEntity>.Filter.Eq(item.Field, searchval);
                                             else
                                                 filter = filter & Builders<TEntity>.Filter.Eq(item.Field, searchval);
-                                            
+
                                         }
                                         else
                                         {
@@ -230,7 +229,7 @@ namespace EnsembleFX.Repository
                                             else
                                                 filter = filter & Builders<TEntity>.Filter.Eq(item.Field, item.Value);
                                         }
-                                        
+
                                     }
                                     break;
                                 case "neq":
@@ -315,7 +314,7 @@ namespace EnsembleFX.Repository
                     }
                 }
 
-                
+
                 FilterDefinition<TEntity> filterCriteria;
                 if (filter == null)
                     filterCriteria = Builders<TEntity>.Filter.Empty;
@@ -564,50 +563,12 @@ namespace EnsembleFX.Repository
             {
                 MongoClient client = null;
                 logManager.LogMessage("ConnectionString", "", "", LogLevel.Info);
-                var connectionSettings = ConfigurationManager.GetSection(COSMOS_CONFIG_SECTION) as NameValueCollection;
                 MongoClientSettings clientSettings = new MongoClientSettings();
-                if (connectionSettings != null)
-                {
-                    // IsCosmosDB flag sets temporarily to support both mongodb and azure cosmos db databases
-                    //if (connectionSettings[COSMOS_ISCOSMOSDB].ToString().Equals("false", StringComparison.OrdinalIgnoreCase))
+                client = new MongoClient(GetConnectionString());
+                logManager.LogMessage("GetClient()", "", "", LogLevel.Info);
+                database = client.GetDatabase(this.databaseName);
+                logManager.LogMessage("GetDatabase() Completed", "", "", LogLevel.Info);
 
-                    if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["CapSpecialtyMongoDBSSLEnabled"]) && ConfigurationManager.AppSettings["CapSpecialtyMongoDBSSLEnabled"].ToString().Equals("true", StringComparison.OrdinalIgnoreCase))
-                    {
-                        clientSettings = MongoClientSettings.FromUrl(new MongoUrl(GetConnectionString()));
-                        clientSettings.SslSettings = new SslSettings();
-                        clientSettings.UseSsl = true;
-                        client = new MongoClient(clientSettings);
-                    }
-                    else
-                    {
-                        client = new MongoClient(GetConnectionString());
-                    }
-
-                    logManager.LogMessage("GetClient()", "", "", LogLevel.Info);
-                    database = client.GetDatabase(GetDatabaseName());
-                    logManager.LogMessage("GetDatabase() Completed", "", "", LogLevel.Info);
-                    //}
-                    //else
-                    //{
-                    //    clientSettings.Server = new MongoServerAddress(connectionSettings[COSMOS_HOST].ToString(), int.Parse(connectionSettings[COSMOS_PORT].ToString()));
-                    //    clientSettings.UseSsl = true;
-                    //    clientSettings.SslSettings = new SslSettings();
-                    //    clientSettings.SslSettings.EnabledSslProtocols = System.Security.Authentication.SslProtocols.Tls12;
-
-                    //    MongoIdentity identity = new MongoInternalIdentity(connectionSettings[COSMOS_DATABASE].ToString(), connectionSettings[COSMOS_USER_NAME].ToString());
-                    //    MongoIdentityEvidence evidence = new PasswordEvidence(connectionSettings[COSMOS_PASSWORD].ToString());
-
-                    //    clientSettings.Credentials = new List<MongoCredential>()
-                    //    {
-                    //       new MongoCredential(connectionSettings[COSMOS_ENCRIPTION_MECHANISM].ToString(), identity, evidence)
-                    //    };
-
-                    //    client = new MongoClient(clientSettings);
-                    //    logManager.LogMessage("GetClient()", "", "", LogLevel.Error);
-                    //    database = client.GetDatabase(connectionSettings[COSMOS_DATABASE].ToString());
-                    //    logManager.LogMessage("GetDatabase() Completed", "", "", LogLevel.Error);
-                    //}
-                }
             }
             catch (Exception ex)
             {
@@ -617,12 +578,7 @@ namespace EnsembleFX.Repository
 
         private string GetConnectionString()
         {
-            return ConfigurationManager.AppSettings.Get("DBConnectionString").Replace("{DB_NAME}", GetDatabaseName());
-        }
-
-        private string GetDatabaseName()
-        {
-            return ConfigurationManager.AppSettings.Get("DBDatabase");
+            return this.connectionString.Replace("{DB_NAME}", this.databaseName);
         }
 
         private void GetCollection()

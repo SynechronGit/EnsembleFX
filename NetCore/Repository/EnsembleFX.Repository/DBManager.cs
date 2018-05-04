@@ -1,4 +1,6 @@
 ﻿using EnsembleFX.Logging;
+using EnsembleFX.Repository.Model;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,11 +11,11 @@ namespace EnsembleFX.Repository
     {
         private IDBRepository<TEntity> _dbRepository;
 
-        public DBManager(string collection, ILogController logController)
+        public DBManager(string collection, ILogController logController, IOptions<ConnectionStrings> connectionStrings)
         {
             if (!string.IsNullOrEmpty(collection))
             {
-                _dbRepository = new MongoDbRepository<TEntity>(collection, logController);
+                _dbRepository = new MongoDbRepository<TEntity>(collection, logController, connectionStrings);
             }
         }
 

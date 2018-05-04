@@ -1,5 +1,7 @@
 ﻿using EnsembleFX.Logging;
 using EnsembleFX.Messaging.Logging;
+using EnsembleFX.Repository.Model;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -22,9 +24,11 @@ namespace EnsembleFX.Messaging.Service
     public class SubscriberManager : ISubscriberManager
     {
         ILogController logController;
-        public SubscriberManager(ILogController logController)
+        IOptions<ConnectionStrings> connectionStrings;
+        public SubscriberManager(ILogController logController, IOptions<ConnectionStrings> connectionStrings)
         {
             this.logController = logController;
+            this.connectionStrings = connectionStrings;
         }
 
         #region Public Members
@@ -89,7 +93,7 @@ namespace EnsembleFX.Messaging.Service
         /// <param name="subscriberType">Type of the subscriber.</param>
         public void RegisterSubscriber(string subscriberType)
         {
-            IMessageBusBuilder builder = new MessageBusBuilder(this.logController);
+            IMessageBusBuilder builder = new MessageBusBuilder(this.logController, this.connectionStrings);
             IMessageSubscriber subscriber = builder.BuildSubscriber(subscriberType);
             if (subscriber != null)
             {

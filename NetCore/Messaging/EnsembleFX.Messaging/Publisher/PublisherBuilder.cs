@@ -3,6 +3,8 @@ using EnsembleFX.Messaging.Logging;
 using EnsembleFX.Messaging.QueueAdapter;
 using EnsembleFX.Messaging.Serialization;
 using EnsembleFX.Messaging.Service;
+using EnsembleFX.Repository.Model;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,9 +16,11 @@ namespace EnsembleFX.Messaging.Publisher
     public class PublisherBuilder<T> : MessageBusBuilder, IPublisherBuilder<T> where T : IMessage
     {
         ILogController logController;
-        public PublisherBuilder(ILogController logController) : base(logController)
+        IOptions<ConnectionStrings> connectionStrings;
+        public PublisherBuilder(ILogController logController, IOptions<ConnectionStrings> connectionStrings) : base(logController, connectionStrings)
         {
             this.logController = logController;
+            this.connectionStrings = connectionStrings;
         }
 
         /// <summary>
@@ -29,7 +33,7 @@ namespace EnsembleFX.Messaging.Publisher
             if (queueAdapter == null)
                 queueAdapter = BuildDefaultQueueAdapter();
             IBusLogger logger = BuildLogger();
-            var publisher = new Publisher<T>(queueAdapter, logger, this.logController);
+            var publisher = new Publisher<T>(queueAdapter, logger, this.logController, this.connectionStrings);
             return publisher;
         }
 
@@ -41,7 +45,7 @@ namespace EnsembleFX.Messaging.Publisher
         {
             IQueueAdapter queueAdapter = BuildDefaultQueueAdapter();
             IBusLogger logger = BuildLogger();
-            var publisher = new Publisher<T>(queueAdapter, logger, this.logController);
+            var publisher = new Publisher<T>(queueAdapter, logger, this.logController, this.connectionStrings);
             return publisher;
         }
 

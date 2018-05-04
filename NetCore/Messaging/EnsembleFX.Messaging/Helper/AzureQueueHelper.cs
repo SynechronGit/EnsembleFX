@@ -5,7 +5,9 @@ using EnsembleFX.Messaging.Bus;
 using EnsembleFX.Messaging.Model;
 using EnsembleFX.Messaging.Model.Enums;
 using EnsembleFX.Repository;
+using EnsembleFX.Repository.Model;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 //using EnsembleFX.Shared;
 //using Microsoft.Azure;
 using Microsoft.ServiceBus;
@@ -82,17 +84,17 @@ namespace EnsembleFX.Helper
         //    _agentConfigurationDBRepository = new DBManager<AgentConfiguration>(agentConfigurationcollectionName, logController).Instance;
         //    _LogManager = new LogManager(logController);
         //}
-        public AzureQueueHelper(ILogController logController)
+        public AzureQueueHelper(ILogController logController, IOptions<ConnectionStrings> connectionStrings)
         {
             //this.httpContextAccessor = httpContextAccessor;
 
-            _dbManageFileTrigger = new DBManager<FileTrigger>(fileTriggerCollectionName, logController).Instance;
-            _dbManageEmailTrigger = new DBManager<EmailTrigger>(emailTriggerCollectionName, logController).Instance;
-            _dbManageTimeTrigger = new DBManager<TimeTrigger>(timeTriggerCollectionName, logController).Instance;
-            _dbIFTTTRepository = new DBManager<IFTTTApplet>(iFTTTCollectionName, logController).Instance;
-            _workflowInstanceDbRepository = new DBManager<WorkflowInstance>(workflowInstanceCollectionName, logController).Instance;
-            _workflowDbRepository = new DBManager<Workflow>(workflowCollectionName, logController).Instance;
-            _agentConfigurationDBRepository = new DBManager<AgentConfiguration>(agentConfigurationcollectionName, logController).Instance;
+            _dbManageFileTrigger = new DBManager<FileTrigger>(fileTriggerCollectionName, logController, connectionStrings).Instance;
+            _dbManageEmailTrigger = new DBManager<EmailTrigger>(emailTriggerCollectionName, logController, connectionStrings).Instance;
+            _dbManageTimeTrigger = new DBManager<TimeTrigger>(timeTriggerCollectionName, logController, connectionStrings).Instance;
+            _dbIFTTTRepository = new DBManager<IFTTTApplet>(iFTTTCollectionName, logController, connectionStrings).Instance;
+            _workflowInstanceDbRepository = new DBManager<WorkflowInstance>(workflowInstanceCollectionName, logController, connectionStrings).Instance;
+            _workflowDbRepository = new DBManager<Workflow>(workflowCollectionName, logController, connectionStrings).Instance;
+            _agentConfigurationDBRepository = new DBManager<AgentConfiguration>(agentConfigurationcollectionName, logController, connectionStrings).Instance;
             _LogManager = new LogManager(logController);
         }
 

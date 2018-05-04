@@ -12,7 +12,8 @@
     <ProjectReference Include="..\..\Filters\EnsembleFX.Filters\EnsembleFX.Filters.csproj" />
     <ProjectReference Include="..\..\Helper\EnsembleFX.Helper\EnsembleFX.Helper.csproj" />
     <ProjectReference Include="..\..\Logging\EnsembleFX.Logging.Model\EnsembleFX.Logging.Model.csproj" />
-    <ProjectReference Include="..\..\Logging\EnsembleFX.Logging\EnsembleFX.Logging.csproj" />
+    <ProjectReference Include="..\..\Logging\EnsembleFX.Logging\EnsembleFX.Logging.csproj" />  
+    <ProjectReference Include="..\..\Repository\EnsembleFX.Repository.Model\EnsembleFX.Repository.Model.csproj" />
   </ItemGroup>
 
 </Project>

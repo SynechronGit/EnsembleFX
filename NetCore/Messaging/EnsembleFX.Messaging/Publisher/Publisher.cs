@@ -3,6 +3,8 @@ using EnsembleFX.Messaging.Logging;
 using EnsembleFX.Messaging.QueueAdapter;
 using EnsembleFX.Messaging.Serialization;
 using EnsembleFX.Messaging.Service;
+using EnsembleFX.Repository.Model;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -33,7 +35,7 @@ namespace EnsembleFX.Messaging.Publisher
         #endregion
 
         #region Constructor
-        public Publisher(ILogController logController) : base(logController)
+        public Publisher(ILogController logController, IOptions<ConnectionStrings> connectionStrings) : base(logController, connectionStrings)
         {
             _queueManager = this.BuildDefaultQueueAdapter();
             logger = this.BuildLogger();
@@ -46,7 +48,7 @@ namespace EnsembleFX.Messaging.Publisher
         /// </summary>
         /// <param name="queueManager">The queue manager.</param>
         /// <param name="logger">The logger.</param>
-        public Publisher(IQueueAdapter queueManager, IBusLogger logger, ILogController logController) : base(logController)
+        public Publisher(IQueueAdapter queueManager, IBusLogger logger, ILogController logController, IOptions<ConnectionStrings> connectionStrings) : base(logController, connectionStrings)
         {
             this.logger = logger;
             this._queueManager = queueManager;
