@@ -1,4 +1,5 @@
 ﻿using EnsembleFX.Core.Model;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace EnsembleFX.Core.Helpers
 {
-    class RestClient<Input, Output>
+    public class RestClient<Input, Output>
     {
         #region Private Members
         private readonly HttpClient _client;
@@ -27,7 +28,7 @@ namespace EnsembleFX.Core.Helpers
         #endregion
 
         #region Constructor
-        public RestClient(string baseAddress, bool byPassAnonymousRequest = false)
+        public RestClient(string baseAddress, IOptions<ServiceAccountAppSettings> appSettings, bool byPassAnonymousRequest = false)
         {
             HttpClientHandler handler = new HttpClientHandler();
             handler.UseDefaultCredentials = false;
@@ -41,9 +42,9 @@ namespace EnsembleFX.Core.Helpers
             postData.Add(new KeyValuePair<string, string>
                                ("grant_type", "password"));
             postData.Add(new KeyValuePair<string, string>
-                               ("username", ConfigurationManager.AppSettings["Ensemble.ServiceAccount.UserName"]));
+                               ("username", appSettings.Value.ServiceAccountUserName));
             postData.Add(new KeyValuePair<string, string>
-                               ("password", ConfigurationManager.AppSettings["Ensemble.ServiceAccount.Password"]));
+                               ("password", appSettings.Value.ServiceAccountPassword));
 
             HttpContent content = new FormUrlEncodedContent(postData);
 
