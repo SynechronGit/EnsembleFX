@@ -82,7 +82,7 @@ namespace EnsembleFX.Cloud
             blockBlob.UploadFromStreamAsync(contentStream);
         }
 
-        public string UploadFileToBlob(string key, Stream contentStream, string contentType)
+        public async Task<string> UploadFileToBlob(string key, Stream contentStream, string contentType)
         {
             string ImageUrl = string.Empty;
             if (contentStream == null)
@@ -93,9 +93,9 @@ namespace EnsembleFX.Cloud
                 contentStream.Seek(0, SeekOrigin.Begin);
 
                 blockBlob = blobContainer.GetBlockBlobReference(key);
-                blockBlob.UploadFromStreamAsync(contentStream);
+                await blockBlob.UploadFromStreamAsync(contentStream);
 
-                blockBlob.FetchAttributesAsync();
+                await blockBlob.FetchAttributesAsync();
                 if (!string.IsNullOrEmpty(contentType))
                 {
                     blockBlob.Properties.ContentType = contentType;
@@ -104,7 +104,7 @@ namespace EnsembleFX.Cloud
                 {
                     blockBlob.Properties.ContentType = "image/tiff";
                 }
-                blockBlob.SetPropertiesAsync();
+                await blockBlob.SetPropertiesAsync();
                 var uriBuilder = new UriBuilder(blockBlob.Uri);
                 uriBuilder.Scheme = "https";
                 ImageUrl = uriBuilder.ToString();
@@ -117,13 +117,13 @@ namespace EnsembleFX.Cloud
             return ImageUrl;
         }
 
-        public MemoryStream GetBlob(string key)
+        public async Task<MemoryStream> GetBlob(string key)
         {
             MemoryStream blobStream = new MemoryStream();
             try
             {
                 blockBlob = blobContainer.GetBlockBlobReference(key);
-                blockBlob.DownloadToStreamAsync(blobStream);
+                await blockBlob.DownloadToStreamAsync(blobStream);
             }
             catch (Exception exp)
             {
