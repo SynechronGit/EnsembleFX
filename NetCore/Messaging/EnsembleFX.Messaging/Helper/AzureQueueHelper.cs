@@ -10,8 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 //using EnsembleFX.Shared;
 //using Microsoft.Azure;
-using Microsoft.ServiceBus;
-using Microsoft.ServiceBus.Messaging;
+using Microsoft.Azure.ServiceBus;
 using Newtonsoft.Json;
 //using STEPIN.Entities;
 using System;
@@ -29,15 +28,8 @@ namespace EnsembleFX.Helper
     public class AzureQueueHelper
     {
 
-        private IHttpContextAccessor httpContextAccessor;       
-
         #region Internal Members
-
-        internal TopicClient topicClient;
-        internal NamespaceManager namespaceManager;
-        internal TopicDescription topicDescriptor;
-
-
+        IQueueClient queueClient;
         #endregion
 
         #region Properties
@@ -102,48 +94,48 @@ namespace EnsembleFX.Helper
 
         #region Methods
 
-        public void CreateTopic(string topicName)
-        {
-            if (String.IsNullOrEmpty(topicName))
-            {
-                topicName = "ensembleemailtopic_staging";
-            }
+        //public void CreateTopic(string topicName)
+        //{
+        //    if (String.IsNullOrEmpty(topicName))
+        //    {
+        //        topicName = "ensembleemailtopic_staging";
+        //    }
 
-            TopicName = topicName;
-            namespaceManager = NamespaceManager.Create();
-            if (!namespaceManager.TopicExists(topicName))
-            {
-                topicDescriptor = namespaceManager.CreateTopic(topicName);
-            }
-            else
-            {
-                topicDescriptor = namespaceManager.GetTopic(topicName);
-            }
-        }
+        //    TopicName = topicName;
+        //    namespaceManager = NamespaceManager.Create();
+        //    if (!namespaceManager.TopicExists(topicName))
+        //    {
+        //        topicDescriptor = namespaceManager.CreateTopic(topicName);
+        //    }
+        //    else
+        //    {
+        //        topicDescriptor = namespaceManager.GetTopic(topicName);
+        //    }
+        //}
 
-        public void SendMessage(IMessageEnvelope envelope)
-        {
-            topicClient = TopicClient.Create(TopicName);
-            BrokeredMessage brokeredMessage = CreateBrokeredMessage(envelope);
-            try
-            {
-                topicClient.Send(brokeredMessage);
-                topicClient.Close();
-            }
-            catch (MessagingException e)
-            {
-                if (!e.IsTransient)
-                {
-                    throw;
-                }
-                else
-                {
-                    Thread.Sleep(2000);
-                    topicClient.Send(brokeredMessage);
-                    topicClient.Close();
-                }
-            }
-        }
+        //public void SendMessage(IMessageEnvelope envelope)
+        //{
+        //    topicClient = TopicClient.Create(TopicName);
+        //    Message Message = CreateMessage(envelope);
+        //    try
+        //    {
+        //        topicClient.Send(Message);
+        //        topicClient.Close();
+        //    }
+        //    catch (MessagingException e)
+        //    {
+        //        if (!e.IsTransient)
+        //        {
+        //            throw;
+        //        }
+        //        else
+        //        {
+        //            Thread.Sleep(2000);
+        //            topicClient.Send(Message);
+        //            topicClient.Close();
+        //        }
+        //    }
+        //}
 
         /// <summary>
         /// Send Message to Azure Queue
@@ -151,17 +143,14 @@ namespace EnsembleFX.Helper
         /// <param name="serviceBusConnectionString">Service Bus Connection string</param>
         /// <param name="queue">queue name</param>
         /// <param name="message">Brokered Message</param>
-        public void SendMessage(string serviceBusConnectionString, string queue, BrokeredMessage message)
+        public async void SendMessage(string serviceBusConnectionString, string queue, Message message)
         {
             try
             {
-                QueueClient client = QueueClient.CreateFromConnectionString(serviceBusConnectionString, queue);
-                client.Send(message);
-            }
-            catch (MessagingException)
-            {
-                throw;
-            }
+                QueueClient client = new QueueClient(serviceBusConnectionString, queue, ReceiveMode.PeekLock);
+                client.SendAsync(message);
+                await client.CloseAsync()
+;            }
             catch (Exception)
             {
                 throw;
@@ -174,237 +163,236 @@ namespace EnsembleFX.Helper
         /// <param name="serviceBusConnectionString">Service Bus Connection string</param>
         /// <param name="queue">queue name</param>
         /// <returns>Brokered Message</returns>
-        public BrokeredMessage ReceiveMessage(string serviceBusConnectionString, string queue)
+        public async Task ReceiveMessage(string serviceBusConnectionString, string queue)
         {
-            ManualResetEvent CompletedEvent = new ManualResetEvent(false);
-            BrokeredMessage receivedMessage = null;
+            queueClient = new QueueClient(serviceBusConnectionString, queue, ReceiveMode.PeekLock);
 
-            OnMessageOptions options = new OnMessageOptions();
-            options.AutoComplete = true; // Indicates if the message-pump should call complete on messages after the callback has completed processing.
-            options.MaxConcurrentCalls = 1; // Indicates the maximum number of concurrent calls to the callback the pump should initiate 
-            options.ExceptionReceived += LogErrors; // Allows users to get notified of any errors encountered by the message pump
-
-            namespaceManager = NamespaceManager.CreateFromConnectionString(serviceBusConnectionString);
-            QueueClient client = QueueClient.CreateFromConnectionString(serviceBusConnectionString, queue);
-            long _queueCount = namespaceManager.GetQueue(queue).MessageCount;
-
-            // Start receiveing messages
-            if (_queueCount > 0)
-            {
-                client.OnMessage((receivedMessages) => // Initiates the message pump and callback is invoked for each message that is recieved, calling close on the client will stop the pump.
-                {
-                    try
-                    {
-                        // Process the message
-                        receivedMessage = receivedMessages.Clone();
-                        receivedMessages.Complete();
-                        CompletedEvent.Set();
-                        client.Close();
-                    }
-                    catch (Exception ex)
-                    {
-                        // Handle any message processing specific exceptions here
-                        CompletedEvent.Set();
-                        client.Close();
-                    }
-                }, options);
-
-                CompletedEvent.WaitOne();
-            }
-            return receivedMessage;
         }
 
-        private void LogErrors(object sender, ExceptionReceivedEventArgs e)
+        public void RegisterOnMessageHandlerAndReceiveMessages()
         {
-            if (e.Exception != null)
+            // Configure the MessageHandler Options in terms of exception handling, number of concurrent messages to deliver etc.
+            var messageHandlerOptions = new MessageHandlerOptions(LogErrors)
             {
-                //Log exception
-            }
+                // Maximum number of Concurrent calls to the callback `ProcessMessagesAsync`, set to 1 for simplicity.
+                // Set it according to how many messages the application wants to process in parallel.
+                MaxConcurrentCalls = 1,
+
+                // Indicates whether MessagePump should automatically complete the messages after returning from User Callback.
+                // False below indicates the Complete will be handled by the User Callback as in `ProcessMessagesAsync` below.
+                AutoComplete = false
+            };
+
+            // Register the function that will process messages
+            queueClient.RegisterMessageHandler(ProcessMessagesAsync, messageHandlerOptions);
         }
 
+        public async Task ProcessMessagesAsync(Message message, CancellationToken token)
+        {
+            // Process the message
+            //Console.WriteLine($"Received message: SequenceNumber:{message.SystemProperties.SequenceNumber} Body:{Encoding.UTF8.GetString(message.Body)}");
+
+            // Complete the message so that it is not received again.
+            // This can be done only if the queueClient is created in ReceiveMode.PeekLock mode (which is default).
+            await queueClient.CompleteAsync(message.SystemProperties.LockToken);
+
+            // Note: Use the cancellationToken passed as necessary to determine if the queueClient has already been closed.
+            // If queueClient has already been Closed, you may chose to not call CompleteAsync() or AbandonAsync() etc. calls 
+            // to avoid unnecessary exceptions.
+        }
+
+        private Task LogErrors(ExceptionReceivedEventArgs exceptionReceivedEventArgs)
+        {
+            var context = exceptionReceivedEventArgs.ExceptionReceivedContext;
+            //Console.WriteLine("Exception context for troubleshooting:");
+            //Console.WriteLine($"- Endpoint: {context.Endpoint}");
+            //Console.WriteLine($"- Entity Path: {context.EntityPath}");
+            //Console.WriteLine($"- Executing Action: {context.Action}");
+            return Task.CompletedTask;
+        }
 
         public IMessageEnvelope ReceiveMessage(bool isWaiting, int timeoutInSeconds, bool receiveAll, string queueName)
         {
             return new MessageEnvelope();
         }
 
-        public void RegisterSubscriber(string subscriberName)
-        {
-            if (String.IsNullOrEmpty(subscriberName))
-            {
-                throw new ArgumentException("SubscriberName is not specified");
-            }
-            SubscriberName = subscriberName;
-            if (!namespaceManager.SubscriptionExists(topicDescriptor.Path, subscriberName))
-            {
-                SubscriptionDescription subscription = namespaceManager.CreateSubscription(topicDescriptor.Path, subscriberName);
-            }
-        }
+        //public void RegisterSubscriber(string subscriberName)
+        //{
+        //    if (String.IsNullOrEmpty(subscriberName))
+        //    {
+        //        throw new ArgumentException("SubscriberName is not specified");
+        //    }
+        //    SubscriberName = subscriberName;
+        //    if (!namespaceManager.SubscriptionExists(topicDescriptor.Path, subscriberName))
+        //    {
+        //        SubscriptionDescription subscription = namespaceManager.CreateSubscription(topicDescriptor.Path, subscriberName);
+        //    }
+        //}
 
-        public void UnregisterSubscriber(string subscriberName)
-        {
-            if (String.IsNullOrEmpty(subscriberName))
-            {
-                throw new ArgumentException("SubscriberName is not specified");
-            }
-            if (namespaceManager.SubscriptionExists(topicDescriptor.Path, subscriberName))
-            {
-                namespaceManager.DeleteSubscription(topicDescriptor.Path, subscriberName);
-            }
-        }
+        //public void UnregisterSubscriber(string subscriberName)
+        //{
+        //    if (String.IsNullOrEmpty(subscriberName))
+        //    {
+        //        throw new ArgumentException("SubscriberName is not specified");
+        //    }
+        //    if (namespaceManager.SubscriptionExists(topicDescriptor.Path, subscriberName))
+        //    {
+        //        namespaceManager.DeleteSubscription(topicDescriptor.Path, subscriberName);
+        //    }
+        //}
 
-        internal BrokeredMessage CreateBrokeredMessage(IMessageEnvelope envelope)
-        {
-            JsonMessageSerializer jsonMessageSerializer = new JsonMessageSerializer();
-            string messageToPost = jsonMessageSerializer.SerializeEnvelope(envelope);
-            BrokeredMessage brokeredMessage = new BrokeredMessage(messageToPost) { MessageId = Guid.NewGuid().ToString() };
-            return brokeredMessage;
-        }
+        //internal Message CreateMessage(IMessageEnvelope envelope)
+        //{
+        //    JsonMessageSerializer jsonMessageSerializer = new JsonMessageSerializer();
+        //    string messageToPost = jsonMessageSerializer.SerializeEnvelope(envelope);
+        //    Message Message = new Message(messageToPost) { MessageId = Guid.NewGuid().ToString() };
+        //    return Message;
+        //}
 
         /// <summary>
         /// Create New Queue 
         /// </summary>
         /// <param name="queueName"></param>
         /// <returns></returns>
-        public void CreateQueue(string serviceBusConnectionString, string queueName)
-        {
-            var namespaceManager = NamespaceManager.CreateFromConnectionString(serviceBusConnectionString);
+        //public void CreateQueue(string serviceBusConnectionString, string queueName)
+        //{
+        //    var namespaceManager = NamespaceManager.CreateFromConnectionString(serviceBusConnectionString);
 
-            // Create if it does not exists
-            if (!namespaceManager.QueueExists(queueName))
-            {
-                namespaceManager.CreateQueue(queueName);
-            }
-        }
+        //    // Create if it does not exists
+        //    if (!namespaceManager.QueueExists(queueName))
+        //    {
+        //        namespaceManager.CreateQueue(queueName);
+        //    }
+        //}
 
-        public bool QueueExits(string serviceBusConnectionString, string queueName)
-        {
-            var namespaceManager = NamespaceManager.CreateFromConnectionString(serviceBusConnectionString);
-            return namespaceManager.QueueExists(queueName);
-        }
-
-
-        public int GetQueueCount(string connectionString)
-        {
-            NamespaceManager namespaceManager = NamespaceManager.CreateFromConnectionString(connectionString);
-            return namespaceManager.GetQueues().Count();
-        }
-
-        public List<AzureQueueModel> GetQueueDetails(string connectionString)
-        {
-            NamespaceManager namespaceManager = NamespaceManager.CreateFromConnectionString(connectionString);
-
-            List<QueueDescription> _queues = namespaceManager.GetQueues().ToList();
-
-            List<AzureQueueModel> _azureQueueModelCollection = new List<AzureQueueModel>();
-
-            _queues.ForEach(delegate (QueueDescription messageQueue)
-            {
-                AzureQueueModel _azureQueueModel = new AzureQueueModel();
-                _azureQueueModel.QueueName = messageQueue.Path;
-                _azureQueueModel.MessageCount = messageQueue.MessageCount;
-                _azureQueueModelCollection.Add(_azureQueueModel);
-            }
-            );
-
-            return _azureQueueModelCollection;
-        }
-        public async Task<List<AzureMessageModel>> GetMessages(string connectionString,string QueueName)
-        {
-            List<AzureQueueModel> _azureQueueModelCollection = new List<AzureQueueModel>();
-
-            NamespaceManager namespaceManager = NamespaceManager.CreateFromConnectionString(connectionString);
-
-            QueueClient _queueClient = QueueClient.CreateFromConnectionString(connectionString, QueueName);
-
-            long _queueCount = namespaceManager.GetQueue(QueueName).MessageCount;
-
-            List<AzureMessageModel> _azureMessageModelCollection = await GetAzureMessages(_queueClient, ConvertLongtoInt(_queueCount));
+        //public bool QueueExits(string serviceBusConnectionString, string queueName)
+        //{
+        //    var namespaceManager = NamespaceManager.CreateFromConnectionString(serviceBusConnectionString);
+        //    return namespaceManager.QueueExists(queueName);
+        //}
 
 
-            return _azureMessageModelCollection;
-        }
+        //public int GetQueueCount(string connectionString)
+        //{
+        //    NamespaceManager namespaceManager = NamespaceManager.CreateFromConnectionString(connectionString);
+        //    return namespaceManager.GetQueues().Count();
+        //}
 
-        private async Task<List<AzureMessageModel>> GetAzureMessages(QueueClient _queueClient, int _queueCount)
-        {
-            List<AzureMessageModel> _azureMessageModelCollection = new List<AzureMessageModel>();
+        //public List<AzureQueueModel> GetQueueDetails(string connectionString)
+        //{
+        //    NamespaceManager namespaceManager = NamespaceManager.CreateFromConnectionString(connectionString);
 
-            var entityName = typeof(WorkflowOrchestratorMessageEnvelope).Name;
+        //    List<QueueDescription> _queues = namespaceManager.GetQueues().ToList();
 
-            for (int i = 0; i < _queueCount; i++)
-            {
-                BrokeredMessage _brokeredMessage = await _queueClient.PeekAsync();
-                WorkflowOrchestratorMessageEnvelope _workFlowOrchestratorMessageEnvelope = null;
-                try
-                {
-                    var contentType = _brokeredMessage.ContentType;
-                    if (!string.IsNullOrEmpty(contentType))
-                    {
-                        var bodyType = Type.GetType(contentType);
-                        if (bodyType != null)
-                        {
-                            if (bodyType.Name == entityName)
-                            {
-                                _workFlowOrchestratorMessageEnvelope = _brokeredMessage.GetBody<WorkflowOrchestratorMessageEnvelope>();
+        //    List<AzureQueueModel> _azureQueueModelCollection = new List<AzureQueueModel>();
 
-                                if (_workFlowOrchestratorMessageEnvelope != null)
-                                {
-                                    AzureMessageModel _azureMessageModel = new AzureMessageModel();
+        //    _queues.ForEach(delegate (QueueDescription messageQueue)
+        //    {
+        //        AzureQueueModel _azureQueueModel = new AzureQueueModel();
+        //        _azureQueueModel.QueueName = messageQueue.Path;
+        //        _azureQueueModel.MessageCount = messageQueue.MessageCount;
+        //        _azureQueueModelCollection.Add(_azureQueueModel);
+        //    }
+        //    );
 
-                                    //Serialize Object To Jsondata.
-                                    _azureMessageModel.JSONData = SerializeObjectToJson<WorkflowOrchestratorMessageEnvelope>(_workFlowOrchestratorMessageEnvelope);
+        //    return _azureQueueModelCollection;
+        //}
+        //public async Task<List<AzureMessageModel>> GetMessages(string connectionString,string QueueName)
+        //{
+        //    List<AzureQueueModel> _azureQueueModelCollection = new List<AzureQueueModel>();
 
-                                    // Get TriggerEventMessage message details
-                                    if (_workFlowOrchestratorMessageEnvelope.TriggerEventMessage != null)
-                                    {
-                                        _azureMessageModel.TriggerName = GetTriggerName(_workFlowOrchestratorMessageEnvelope.TriggerEventMessage.TriggerId.ToString(),
-                                                                        _workFlowOrchestratorMessageEnvelope.TriggerEventMessage.TriggerType);
+        //    NamespaceManager namespaceManager = NamespaceManager.CreateFromConnectionString(connectionString);
 
-                                        _azureMessageModel.TriggerType = GetTriggerType(_workFlowOrchestratorMessageEnvelope.TriggerEventMessage.TriggerType);
+        //    QueueClient _queueClient = QueueClient.CreateFromConnectionString(connectionString, QueueName);
 
-                                        IFTTTApplet _iFTTTApplet = _dbIFTTTRepository.GetById(_workFlowOrchestratorMessageEnvelope.TriggerEventMessage.IFTTTAppletId.ToString());
+        //    long _queueCount = namespaceManager.GetQueue(QueueName).MessageCount;
 
-                                        if (_iFTTTApplet != null)
-                                            _azureMessageModel.IFTTTAppletName = _iFTTTApplet.AppletTitle;
-                                        _azureMessageModel.MessageType = MessageTypes.Trigger_Event_Message.ToString().Replace("_", " ");
+        //    List<AzureMessageModel> _azureMessageModelCollection = await GetAzureMessages(_queueClient, ConvertLongtoInt(_queueCount));
 
-                                    }
 
-                                    // Get WorkflowTaskStatusMessage message details
-                                    if (_workFlowOrchestratorMessageEnvelope.WorkflowTaskStatusMessage != null)
-                                    {
-                                        _azureMessageModel.WorkFlowName = GetWorkFlowName(_workFlowOrchestratorMessageEnvelope.WorkflowTaskStatusMessage.WorkflowId.ToString());
-                                        _azureMessageModel.WorkFlowTaskType = GetWorkFlowTaskType(_workFlowOrchestratorMessageEnvelope.WorkflowTaskStatusMessage.OriginalCommand.TaskType);
-                                        _azureMessageModel.WorkFlowTaskTypeStatus = _workFlowOrchestratorMessageEnvelope.WorkflowTaskStatusMessage.Status.ToString();
-                                        _azureMessageModel.AgentName = GetAgentName(_workFlowOrchestratorMessageEnvelope.WorkflowTaskStatusMessage.AssignedAgentConfigurationId.ToString());
-                                        _azureMessageModel.StartedOnUTC = _workFlowOrchestratorMessageEnvelope.WorkflowTaskStatusMessage.StartedOnUTC;
-                                        _azureMessageModel.MessageType = MessageTypes.Workflow_Task_Status_Message.ToString().Replace("_", " ");
-                                        _azureMessageModel.Output = (_workFlowOrchestratorMessageEnvelope.WorkflowTaskStatusMessage.Output == null) ? "" : _workFlowOrchestratorMessageEnvelope.WorkflowTaskStatusMessage.Output;
-                                    }
-                                    _azureMessageModelCollection.Add(_azureMessageModel);
-                                }
-                            }
-                            else
-                            {
-                                //If entity name is not WorkflowOrchestratorMessageEnvelope then serialize the entity to JSON.
-                                var _azureMessageModel = new AzureMessageModel();
-                                var messageBody = GetMessageBodyType(_brokeredMessage, bodyType);
-                                _azureMessageModel.JSONData = SerializeObjectToJson<object>(messageBody);
-                                _azureMessageModelCollection.Add(_azureMessageModel);
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    //TODO: Pass username and requestAbsoluteUrl from httpcontext here
-                    var logModel = CreateLogModel(ex.Message, ex.StackTrace, "", "");
-                    _LogManager.LogMessage(logModel, LogLevel.Error);
+        //    return _azureMessageModelCollection;
+        //}
 
-                }
-            }
-            return _azureMessageModelCollection;
-        }
+        //private async Task<List<AzureMessageModel>> GetAzureMessages(QueueClient _queueClient, int _queueCount)
+        //{
+        //    List<AzureMessageModel> _azureMessageModelCollection = new List<AzureMessageModel>();
+
+        //    var entityName = typeof(WorkflowOrchestratorMessageEnvelope).Name;
+
+        //    for (int i = 0; i < _queueCount; i++)
+        //    {
+        //        Message _Message = await _queueClient.PeekAsync();
+        //        WorkflowOrchestratorMessageEnvelope _workFlowOrchestratorMessageEnvelope = null;
+        //        try
+        //        {
+        //            var contentType = _Message.ContentType;
+        //            if (!string.IsNullOrEmpty(contentType))
+        //            {
+        //                var bodyType = Type.GetType(contentType);
+        //                if (bodyType != null)
+        //                {
+        //                    if (bodyType.Name == entityName)
+        //                    {
+        //                        _workFlowOrchestratorMessageEnvelope = _Message.GetBody<WorkflowOrchestratorMessageEnvelope>();
+
+        //                        if (_workFlowOrchestratorMessageEnvelope != null)
+        //                        {
+        //                            AzureMessageModel _azureMessageModel = new AzureMessageModel();
+
+        //                            //Serialize Object To Jsondata.
+        //                            _azureMessageModel.JSONData = SerializeObjectToJson<WorkflowOrchestratorMessageEnvelope>(_workFlowOrchestratorMessageEnvelope);
+
+        //                            // Get TriggerEventMessage message details
+        //                            if (_workFlowOrchestratorMessageEnvelope.TriggerEventMessage != null)
+        //                            {
+        //                                _azureMessageModel.TriggerName = GetTriggerName(_workFlowOrchestratorMessageEnvelope.TriggerEventMessage.TriggerId.ToString(),
+        //                                                                _workFlowOrchestratorMessageEnvelope.TriggerEventMessage.TriggerType);
+
+        //                                _azureMessageModel.TriggerType = GetTriggerType(_workFlowOrchestratorMessageEnvelope.TriggerEventMessage.TriggerType);
+
+        //                                IFTTTApplet _iFTTTApplet = _dbIFTTTRepository.GetById(_workFlowOrchestratorMessageEnvelope.TriggerEventMessage.IFTTTAppletId.ToString());
+
+        //                                if (_iFTTTApplet != null)
+        //                                    _azureMessageModel.IFTTTAppletName = _iFTTTApplet.AppletTitle;
+        //                                _azureMessageModel.MessageType = MessageTypes.Trigger_Event_Message.ToString().Replace("_", " ");
+
+        //                            }
+
+        //                            // Get WorkflowTaskStatusMessage message details
+        //                            if (_workFlowOrchestratorMessageEnvelope.WorkflowTaskStatusMessage != null)
+        //                            {
+        //                                _azureMessageModel.WorkFlowName = GetWorkFlowName(_workFlowOrchestratorMessageEnvelope.WorkflowTaskStatusMessage.WorkflowId.ToString());
+        //                                _azureMessageModel.WorkFlowTaskType = GetWorkFlowTaskType(_workFlowOrchestratorMessageEnvelope.WorkflowTaskStatusMessage.OriginalCommand.TaskType);
+        //                                _azureMessageModel.WorkFlowTaskTypeStatus = _workFlowOrchestratorMessageEnvelope.WorkflowTaskStatusMessage.Status.ToString();
+        //                                _azureMessageModel.AgentName = GetAgentName(_workFlowOrchestratorMessageEnvelope.WorkflowTaskStatusMessage.AssignedAgentConfigurationId.ToString());
+        //                                _azureMessageModel.StartedOnUTC = _workFlowOrchestratorMessageEnvelope.WorkflowTaskStatusMessage.StartedOnUTC;
+        //                                _azureMessageModel.MessageType = MessageTypes.Workflow_Task_Status_Message.ToString().Replace("_", " ");
+        //                                _azureMessageModel.Output = (_workFlowOrchestratorMessageEnvelope.WorkflowTaskStatusMessage.Output == null) ? "" : _workFlowOrchestratorMessageEnvelope.WorkflowTaskStatusMessage.Output;
+        //                            }
+        //                            _azureMessageModelCollection.Add(_azureMessageModel);
+        //                        }
+        //                    }
+        //                    else
+        //                    {
+        //                        //If entity name is not WorkflowOrchestratorMessageEnvelope then serialize the entity to JSON.
+        //                        var _azureMessageModel = new AzureMessageModel();
+        //                        var messageBody = GetMessageBodyType(_Message, bodyType);
+        //                        _azureMessageModel.JSONData = SerializeObjectToJson<object>(messageBody);
+        //                        _azureMessageModelCollection.Add(_azureMessageModel);
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            //TODO: Pass username and requestAbsoluteUrl from httpcontext here
+        //            var logModel = CreateLogModel(ex.Message, ex.StackTrace, "", "");
+        //            _LogManager.LogMessage(logModel, LogLevel.Error);
+
+        //        }
+        //    }
+        //    return _azureMessageModelCollection;
+        //}
 
         private string GetTriggerName(string triggerId, TriggerType triggerType)
         {
@@ -522,11 +510,11 @@ namespace EnsembleFX.Helper
             return JsonConvert.SerializeObject(ObjectToSerialize);
         }
 
-        private object GetMessageBodyType(BrokeredMessage _brokeredMessage, Type bodyType)
+        private object GetMessageBodyType(Message _Message, Type bodyType)
         {
-            MethodInfo method = typeof(BrokeredMessage).GetMethod("GetBody", new Type[] { });
+            MethodInfo method = typeof(Message).GetMethod("GetBody", new Type[] { });
             MethodInfo generic = method.MakeGenericMethod(bodyType);
-            return generic.Invoke(_brokeredMessage, null);
+            return generic.Invoke(_Message, null);
         }
 
         private LogModel CreateLogModel(string message,string stacktrace, string username, string requestAbsoluteUrl)

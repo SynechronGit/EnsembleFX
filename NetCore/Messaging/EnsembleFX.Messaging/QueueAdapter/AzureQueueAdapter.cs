@@ -9,7 +9,7 @@ using EnsembleFX.Messaging.Service;
 using EnsembleFX.Repository.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using Microsoft.ServiceBus.Messaging;
+//using Microsoft.ServiceBus.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -73,8 +73,8 @@ namespace EnsembleFX.Messaging.QueueAdapter
         {
             try
             {
-                _azureQueueHelper.CreateTopic(_configuration.Name);  // This is the topic Name
-                _azureQueueHelper.RegisterSubscriber("DefaultSubscriber");  // Register DefaultSubscriber - it is required by Azure
+             //   _azureQueueHelper.CreateTopic(_configuration.Name);  // This is the topic Name
+               // _azureQueueHelper.RegisterSubscriber("DefaultSubscriber");  // Register DefaultSubscriber - it is required by Azure
             }
             catch (System.Exception ex)
             {
@@ -101,7 +101,7 @@ namespace EnsembleFX.Messaging.QueueAdapter
         {
             try
             {
-                _azureQueueHelper.SendMessage(messageEnvelope);
+               // _azureQueueHelper.SendMessage(messageEnvelope);
             }
             catch (System.Exception ex)
             {
@@ -115,55 +115,55 @@ namespace EnsembleFX.Messaging.QueueAdapter
         /// </summary>
         protected void ReceiveMessageAsync()
         {
-            SubscriptionClient subscriptionClient = SubscriptionClient.Create(_azureQueueHelper.TopicName, _azureQueueHelper.SubscriberName, ReceiveMode.PeekLock);
-            BrokeredMessage brokeredMessage;
-            IMessageEnvelope receivedMessage;
+       ////     SubscriptionClient subscriptionClient = SubscriptionClient.Create(_azureQueueHelper.TopicName, _azureQueueHelper.SubscriberName, ReceiveMode.PeekLock);
+       //     BrokeredMessage brokeredMessage;
+       //     IMessageEnvelope receivedMessage;
 
-            while (!_isStop)
-            {
-                brokeredMessage = null;
-                receivedMessage = null;
+       //     while (!_isStop)
+       //     {
+       //         brokeredMessage = null;
+       //         receivedMessage = null;
 
-                try
-                {
-                    // Get envelope from azure dequeue
-                    brokeredMessage = subscriptionClient.Receive(TimeSpan.FromSeconds(Convert.ToInt32(_configuration.TimeoutInSeconds)));
-                    if (brokeredMessage != null)
-                    {
-                        string receivedEnvelope = brokeredMessage.GetBody<string>();
+       //         try
+       //         {
+       //             // Get envelope from azure dequeue
+       //             brokeredMessage = subscriptionClient.Receive(TimeSpan.FromSeconds(Convert.ToInt32(_configuration.TimeoutInSeconds)));
+       //             if (brokeredMessage != null)
+       //             {
+       //                 string receivedEnvelope = brokeredMessage.GetBody<string>();
 
-                        JsonMessageSerializer jsonMessageSerializer = new JsonMessageSerializer();
-                        receivedMessage = jsonMessageSerializer.DeserializeEnvelope(receivedEnvelope);
+       //                 JsonMessageSerializer jsonMessageSerializer = new JsonMessageSerializer();
+       //                 receivedMessage = jsonMessageSerializer.DeserializeEnvelope(receivedEnvelope);
 
-                        if (receivedMessage != null)
-                        {
-                            brokeredMessage.Complete();
-                            _logger.LogAdapterSuccess(receivedMessage, "Message Received:" + receivedMessage.MessageUID, this.GetType());
-                            OnMessage(receivedMessage);
-                        }
-                    }
-                }
-                catch (Microsoft.ServiceBus.Messaging.MessagingException e)
-                {
-                    if (!e.IsTransient)
-                    {
-                        if (brokeredMessage != null)
-                        {
-                            brokeredMessage.Abandon();
-                        }
-                        throw;
-                    }
-                    else
-                    {
-                        Thread.Sleep(2000);  // Retry the message after 2 seconds for non-transient Messaging errors
-                    }
-                }
-                catch (System.Exception ex)
-                {
-                    _logger.LogAdapterFailure(receivedMessage, ex.Message, ex, this.GetType());
-                }
-                Thread.Sleep(5000);
-            }
+       //                 if (receivedMessage != null)
+       //                 {
+       //                     brokeredMessage.Complete();
+       //                     _logger.LogAdapterSuccess(receivedMessage, "Message Received:" + receivedMessage.MessageUID, this.GetType());
+       //                     OnMessage(receivedMessage);
+       //                 }
+       //             }
+       //         }
+       //         catch (Microsoft.ServiceBus.Messaging.MessagingException e)
+       //         {
+       //             if (!e.IsTransient)
+       //             {
+       //                 if (brokeredMessage != null)
+       //                 {
+       //                     brokeredMessage.Abandon();
+       //                 }
+       //                 throw;
+       //             }
+       //             else
+       //             {
+       //                 Thread.Sleep(2000);  // Retry the message after 2 seconds for non-transient Messaging errors
+       //             }
+       //         }
+       //         catch (System.Exception ex)
+       //         {
+       //             _logger.LogAdapterFailure(receivedMessage, ex.Message, ex, this.GetType());
+       //         }
+       //         Thread.Sleep(5000);
+       //     }
         }
 
         /// <summary>
