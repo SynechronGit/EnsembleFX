@@ -1,4 +1,5 @@
 ﻿using EnsembleFX.Repository.Model;
+using Microsoft.Extensions.Options;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using System;
@@ -17,10 +18,10 @@ namespace EnsembleFX.Repository
         private CloudBlobContainer blobContainer;
         private CloudBlockBlob blockBlob;
 
-        public BlobStorageRepository(AzureConnectionString azureConnectionString)
+        public BlobStorageRepository(IOptions<AzureConnectionString> azureConnectionString)
         {
-            cloudConnection = azureConnectionString.ConnectionString;
-            cloudContainer = azureConnectionString.CloudContainer;
+            cloudConnection = azureConnectionString.Value.ConnectionString;
+            cloudContainer = azureConnectionString.Value.CloudContainer;
             InitializeCloudClient();
         }
 

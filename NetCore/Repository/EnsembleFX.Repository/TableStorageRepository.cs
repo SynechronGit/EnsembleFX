@@ -1,4 +1,5 @@
 ﻿using EnsembleFX.Repository.Model;
+using Microsoft.Extensions.Options;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.RetryPolicies;
 using Microsoft.WindowsAzure.Storage.Table;
@@ -36,8 +37,8 @@ namespace EnsembleFX.Repository
         /// </summary>
         /// <param name="tableName">The table name</param>
         /// <param name="storageConnectionString">The connection string</param>
-        public TableStorageRepository(AzureConnectionString azureConnectionString)
-             : this(typeof(T).Name, azureConnectionString.ConnectionString, DefaultRetries, DefaultRetryTimeInSeconds) { }
+        public TableStorageRepository(IOptions<AzureConnectionString> azureConnectionString)
+             : this(typeof(T).Name, azureConnectionString.Value.ConnectionString, DefaultRetries, DefaultRetryTimeInSeconds) { }
 
         /// <summary>
         /// Constructor
