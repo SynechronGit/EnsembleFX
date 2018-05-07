@@ -14,57 +14,57 @@ namespace EnsembleFX.Core.Dependency
     /// <summary>
     /// Dependency injection Service Behavior
     /// </summary>
-    public class DependencyServiceBehavior //: IServiceBehavior //To Do : .NET Core replacement for IServiceBehavior. Uncomment the commented code.
-    {
+    //public class DependencyServiceBehavior //: IServiceBehavior //To Do : .NET Core replacement for IServiceBehavior. Uncomment the commented code.
+    //{
 
-        //#region Constructors
+    //    //#region Constructors
 
-        //public DependencyServiceBehavior()
-        //{
-        //    InstanceProvider = new DependencyInstanceProvider();
-        //}
+    //    //public DependencyServiceBehavior()
+    //    //{
+    //    //    InstanceProvider = new DependencyInstanceProvider();
+    //    //}
 
-        //#endregion
+    //    //#endregion
 
-        //#region Private Members
+    //    //#region Private Members
         
-        //private ServiceHost serviceHost = null;
+    //    //private ServiceHost serviceHost = null;
 
-        //#endregion
+    //    //#endregion
 
-        //#region Public Properties
+    //    //#region Public Properties
 
-        //public DependencyInstanceProvider InstanceProvider { get; set; }
+    //    //public DependencyInstanceProvider InstanceProvider { get; set; }
 
-        //#endregion
+    //    //#endregion
 
-        //#region IServiceBehavior Implementation
+    //    //#region IServiceBehavior Implementation
 
-        //public void Validate(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase)
-        //{
+    //    //public void Validate(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase)
+    //    //{
             
-        //}
+    //    //}
 
-        //public void AddBindingParameters(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase, Collection<ServiceEndpoint> endpoints, BindingParameterCollection bindingParameters)
-        //{
-        //}
+    //    //public void AddBindingParameters(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase, Collection<ServiceEndpoint> endpoints, BindingParameterCollection bindingParameters)
+    //    //{
+    //    //}
 
-        //public void ApplyDispatchBehavior(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase)
-        //{
-        //    foreach (ChannelDispatcherBase cdb in serviceHostBase.ChannelDispatchers)
-        //    {
-        //        ChannelDispatcher cd = cdb as ChannelDispatcher;
-        //        if (cd != null)
-        //        {
-        //            foreach (EndpointDispatcher ed in cd.Endpoints)
-        //            {
-        //                InstanceProvider.ServiceType = serviceDescription.ServiceType;
-        //                ed.DispatchRuntime.InstanceProvider = InstanceProvider; 
-        //            }
-        //        }
-        //    }
-        //}
+    //    //public void ApplyDispatchBehavior(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase)
+    //    //{
+    //    //    foreach (ChannelDispatcherBase cdb in serviceHostBase.ChannelDispatchers)
+    //    //    {
+    //    //        ChannelDispatcher cd = cdb as ChannelDispatcher;
+    //    //        if (cd != null)
+    //    //        {
+    //    //            foreach (EndpointDispatcher ed in cd.Endpoints)
+    //    //            {
+    //    //                InstanceProvider.ServiceType = serviceDescription.ServiceType;
+    //    //                ed.DispatchRuntime.InstanceProvider = InstanceProvider; 
+    //    //            }
+    //    //        }
+    //    //    }
+    //    //}
 
-        //#endregion
-    }
+    //    //#endregion
+    //}
 }

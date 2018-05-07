@@ -10,53 +10,53 @@ namespace EnsembleFX.Core.Dependency
     /// <summary>
     /// 
     /// </summary>
-    public class DependencyInstanceProvider //: IInstanceProvider //To Do : .NET Core replacement for IInstanceProvider
-    {
+    //public class DependencyInstanceProvider //: IInstanceProvider //To Do : .NET Core replacement for IInstanceProvider
+    //{
 
-        #region Constructors
+    //    #region Constructors
 
-        public DependencyInstanceProvider() : this(null) 
-        { 
+    //    public DependencyInstanceProvider() : this(null) 
+    //    { 
             
-        } 
+    //    } 
 
-        public DependencyInstanceProvider(Type type)
-        {
-            ServiceType = type;
-            dependencyManager = new DependencyManager();
-        }
+    //    public DependencyInstanceProvider(Type type)
+    //    {
+    //        ServiceType = type;
+    //        dependencyManager = new DependencyManager();
+    //    }
 
-        #endregion
+    //    #endregion
 
-        #region Private Members
+    //    #region Private Members
         
-        private IDependencyManager dependencyManager;
+    //    private IDependencyManager dependencyManager;
 
-        #endregion
+    //    #endregion
 
-        #region Public Properties
+    //    #region Public Properties
 
-        public Type ServiceType { set; get; }
+    //    public Type ServiceType { set; get; }
 
-        #endregion
+    //    #endregion
 
-        #region IInstanceProvider Members
+    //    #region IInstanceProvider Members
 
-        public object GetInstance(InstanceContext instanceContext, Message message)
-        {
-            return dependencyManager.Resolve(ServiceType);
-        }
+    //    public object GetInstance(InstanceContext instanceContext, Message message)
+    //    {
+    //        return dependencyManager.Resolve(ServiceType);
+    //    }
 
-        public object GetInstance(InstanceContext instanceContext)
-        {
-            return GetInstance(instanceContext, null); 
-        }
+    //    public object GetInstance(InstanceContext instanceContext)
+    //    {
+    //        return GetInstance(instanceContext, null); 
+    //    }
 
-        public void ReleaseInstance(InstanceContext instanceContext, object instance)
-        {
+    //    public void ReleaseInstance(InstanceContext instanceContext, object instance)
+    //    {
 
-        }
+    //    }
 
-        #endregion
-    }
+    //    #endregion
+    //}
 }

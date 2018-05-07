@@ -1,14 +1,12 @@
-﻿using System;
+﻿using EnsembleFX.Logging.Configuration;
+using EnsembleFX.Logging.Entities;
+using EnsembleFX.Logging.Enums;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using EnsembleFX.Core.Dependency;
-using EnsembleFX.Logging.Configuration;
-using EnsembleFX.Logging.Enums;
-using EnsembleFX.Logging.Entities;
 
 namespace EnsembleFX.Logging
 {
@@ -23,7 +21,7 @@ namespace EnsembleFX.Logging
         private static ConcurrentQueue<ApplicationLogs> logItemsQueue;
         private static Task processQueueTask;
         private bool isInitialized = false;
-        private DependencyManager dependencyManager;
+        
         Dictionary<int, ILogger> targetLoggers;
         private int loggerSequence = 0;
 
@@ -108,8 +106,7 @@ namespace EnsembleFX.Logging
         /// </summary>
         internal void Initialize()
         {
-            logItemsQueue = new ConcurrentQueue<ApplicationLogs>();
-            dependencyManager = new DependencyManager();
+            logItemsQueue = new ConcurrentQueue<ApplicationLogs>();            
             targetLoggers = new Dictionary<int, ILogger>();
 
             // LogController Level settings
@@ -130,7 +127,7 @@ namespace EnsembleFX.Logging
                 foreach (LoggerConfigurationSetting configuredLogger in LoggerSettings.OrderBy(o => Convert.ToInt32(o.PriorityOrder)))
                 {
                     loggerSequence++;
-                    loggerInstance = dependencyManager.Resolve<ILogger>(configuredLogger.TypeName);
+                    //loggerInstance = dependencyManager.Resolve<ILogger>(configuredLogger.TypeName);
                     loggerInstance.LoggerParameters = configuredLogger.Parameters;
                     loggerInstance.LoggerPriority = Convert.ToInt32(configuredLogger.PriorityOrder);
                     targetLoggers.Add(loggerSequence, loggerInstance);
