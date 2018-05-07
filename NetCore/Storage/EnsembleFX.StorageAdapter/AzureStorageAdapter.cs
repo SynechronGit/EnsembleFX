@@ -11,7 +11,7 @@ using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace EnsembleFX.StorageAdapter
 {
-    public class AzureStorageAdapter : IStorageAdapter
+    public class AzureStorageAdapter : ICloudStorageAdapter
     {
 
         #region Internal Members
@@ -29,8 +29,8 @@ namespace EnsembleFX.StorageAdapter
         private CloudBlockBlob blockBlob;
         private double sharedAccessTokenExpiryTimeInMinutes;
 
-        public CloudBlobContainer BlobContainer { get { return blobContainer; } }
         #endregion
+        public CloudBlobContainer BlobContainer { get { return blobContainer; } }
 
         #region Constructors
 
