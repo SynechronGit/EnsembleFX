@@ -204,5 +204,15 @@ namespace EnsembleFX.Helper
 
             return inputDateString;
         }
+
+        public static double ConvertMetersToMiles(this double meters)
+        {
+            return meters * 0.00062137;
+        }
+        public static double ConvertMilesToKM(this double meters)
+        {
+            return meters / 1000;
+        }
+
     }
 }
