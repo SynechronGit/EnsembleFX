@@ -36,48 +36,52 @@ namespace EnsembleFX.Core.Helpers
             _client = new HttpClient(handler);
             _client.BaseAddress = new Uri(baseAddress);
             _client.Timeout = TimeSpan.FromMinutes(10);
-            //_client.DefaultRequestHeaders.Add("Connection", "Keep-alive");
 
-            var postData = new List<KeyValuePair<string, string>>();
-            postData.Add(new KeyValuePair<string, string>
-                               ("grant_type", "password"));
-            postData.Add(new KeyValuePair<string, string>
-                               ("username", appSettings.Value.ServiceAccountUserName));
-            postData.Add(new KeyValuePair<string, string>
-                               ("password", appSettings.Value.ServiceAccountPassword));
 
-            HttpContent content = new FormUrlEncodedContent(postData);
+            //TODO
+            //AS OF NOW WE DON'T HAVE TOKEN SERVICE, SO BELOW CODE IS COMMENTED FOR TESTING PURPOSE.
+            //ONCE WE HAVE TOKEN SERVICE THEN WE CAN UNCOMMENT BELOW CODE AND DO THE PROPER TESTING.
 
-            if (!byPassAnonymousRequest)
-            {
-                string result = string.Empty;
-                try
-                {
-                    if (TokenInstance.ApiToken == null || string.IsNullOrWhiteSpace(TokenInstance.ApiToken.access_token) || TokenInstance.ApiToken.expires < DateTime.UtcNow)
-                    {
-                        lock (TokenInstance.ApiToken)
-                        {
-                            if (TokenInstance.ApiToken == null || string.IsNullOrWhiteSpace(TokenInstance.ApiToken.access_token) || TokenInstance.ApiToken.expires < DateTime.UtcNow)
-                            {
-                                result = _client.PostAsync(baseAddress + "/Token", content)
-                                        .Result.Content.ReadAsStringAsync().Result;
+            //var postData = new List<KeyValuePair<string, string>>();
+            //postData.Add(new KeyValuePair<string, string>
+            //                   ("grant_type", "password"));
+            //postData.Add(new KeyValuePair<string, string>
+            //                   ("username", appSettings.Value.ServiceAccountUserName));
+            //postData.Add(new KeyValuePair<string, string>
+            //                   ("password", appSettings.Value.ServiceAccountPassword));
 
-                                token = JsonConvert.DeserializeObject<Dictionary<string, string>>(result);
-                                TokenInstance.ApiToken = this.GetApiToken(token);
-                            }
-                        }
-                    }
-                    Success = false;
-                    _client.DefaultRequestHeaders.Accept.Add(
-                        new MediaTypeWithQualityHeaderValue("application/json"));
-                    var header = new AuthenticationHeaderValue("Bearer", TokenInstance.ApiToken.access_token);
-                    _client.DefaultRequestHeaders.Authorization = header;
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception(String.Format("Error Message : {0} || Server Response : {1} || Stack Trace : {2}", ex.Message, result, ex.StackTrace));
-                }
-            }
+            //HttpContent content = new FormUrlEncodedContent(postData);
+           
+            //if (!byPassAnonymousRequest)
+            //{
+            //    string result = string.Empty;
+            //    try
+            //    {
+            //        if (TokenInstance.ApiToken == null || string.IsNullOrWhiteSpace(TokenInstance.ApiToken.access_token) || TokenInstance.ApiToken.expires < DateTime.UtcNow)
+            //        {
+            //            lock (TokenInstance.ApiToken)
+            //            {
+            //                if (TokenInstance.ApiToken == null || string.IsNullOrWhiteSpace(TokenInstance.ApiToken.access_token) || TokenInstance.ApiToken.expires < DateTime.UtcNow)
+            //                {
+            //                    result = _client.PostAsync(baseAddress + "/Token", content)
+            //                            .Result.Content.ReadAsStringAsync().Result;
+
+            //                    token = JsonConvert.DeserializeObject<Dictionary<string, string>>(result);
+            //                    TokenInstance.ApiToken = this.GetApiToken(token);
+            //                }
+            //            }
+            //        }
+            //        Success = false;
+            //        _client.DefaultRequestHeaders.Accept.Add(
+            //            new MediaTypeWithQualityHeaderValue("application/json"));
+            //        var header = new AuthenticationHeaderValue("Bearer", TokenInstance.ApiToken.access_token);
+            //        _client.DefaultRequestHeaders.Authorization = header;
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        throw new Exception(String.Format("Error Message : {0} || Server Response : {1} || Stack Trace : {2}", ex.Message, result, ex.StackTrace));
+            //    }
+            //}
         }
 
         #endregion
