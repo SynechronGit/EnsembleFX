@@ -32,9 +32,9 @@ namespace EnsembleFX.Logging
         /// <summary>
         /// Initializes the LogController to target multiple configured loggers
         /// </summary>
-        public LogController()
+        public LogController(ILogger logger)
         {
-
+            loggerInstance = logger;
         }
         #endregion
 
