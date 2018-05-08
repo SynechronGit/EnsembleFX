@@ -125,7 +125,7 @@ namespace EnsembleFX.Helper
             return query;
         }
 
-        public static string ContainsFilter(string columnName,string value)
+        public static string StartsWithFilter(string columnName,string value)
         {
             var length = value.Length - 1;
             var lastChar = value[length];
