@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.WindowsAzure.Storage.Blob;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -11,5 +12,6 @@ namespace EnsembleFX.Repository
         void UploadBlob(string key, Stream contentStream);
         string GetTextBlob(string key);
         string GetBlobURL(string key);
+        CloudBlockBlob GetBlockBlobReference(string blobName);
     }
 }

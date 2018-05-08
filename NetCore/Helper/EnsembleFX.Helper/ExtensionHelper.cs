@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -89,7 +90,7 @@ namespace EnsembleFX.Helper
             return Convert.ToString(inputString).Trim();
         }
 
-        public static string RemoveSpecialCharactersWithoutSpace(string str)
+        public static string RemoveSpecialCharactersWithoutSpace(this string str)
         {
             return Regex.Replace(str, "[^a-zA-Z0-9_]+", "", RegexOptions.Compiled);
         }
@@ -157,6 +158,14 @@ namespace EnsembleFX.Helper
                 result = ms.ToArray();
             }
             return result;
+        }
+
+        public static bool ContainsAny(this string fullString, List<string> phraseList)
+        {
+            if (phraseList != null && phraseList.Count > 0 && !string.IsNullOrWhiteSpace(fullString))
+                return phraseList.Any(d => fullString.ToLower().Contains(Convert.ToString(d).ToLower()));
+
+            return false;
         }
 
         public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)

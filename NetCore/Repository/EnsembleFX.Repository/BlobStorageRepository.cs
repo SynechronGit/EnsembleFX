@@ -93,5 +93,10 @@ namespace EnsembleFX.Repository
             blobUrl = blockBlob.Uri.ToString();
             return blobUrl;
         }
+
+        public CloudBlockBlob GetBlockBlobReference(string blobName)
+        {
+            return blobContainer.GetBlockBlobReference(blobName);
+        }
     }
 }
