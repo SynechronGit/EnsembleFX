@@ -56,7 +56,7 @@ namespace EnsembleFX.Repository
             using (var fs = System.IO.File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.None))
             {
                 blockBlob.Properties.ContentType = "text/plain";
-                blockBlob.UploadFromStreamAsync(fs);
+                blockBlob.UploadFromStreamAsync(fs).Wait();
             }
             if (deleteAfter)
             {
@@ -71,7 +71,7 @@ namespace EnsembleFX.Repository
             contentStream.Seek(0, SeekOrigin.Begin);
 
             blockBlob = blobContainer.GetBlockBlobReference(key);
-            blockBlob.UploadFromStreamAsync(contentStream);
+            blockBlob.UploadFromStreamAsync(contentStream).Wait();
         }
 
         public string GetTextBlob(string key)
@@ -80,7 +80,7 @@ namespace EnsembleFX.Repository
 
             MemoryStream blobStream = new MemoryStream();
             blockBlob = blobContainer.GetBlockBlobReference(key);
-            blockBlob.DownloadToStreamAsync(blobStream);
+            blockBlob.DownloadToStreamAsync(blobStream).Wait();
             returnText = System.Text.Encoding.UTF8.GetString(blobStream.ToArray());
 
             return returnText;
