@@ -213,6 +213,11 @@ namespace EnsembleFX.Helper
         {
             return meters / 1000;
         }
-
+        public static T ToEnum<T>(this string inputString)
+        {
+            if (string.IsNullOrWhiteSpace(inputString))
+                return default(T);
+            return (T)Enum.Parse(typeof(T), Convert.ToString(inputString));
+        }
     }
 }
