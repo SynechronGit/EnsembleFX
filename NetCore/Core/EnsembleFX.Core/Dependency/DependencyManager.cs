@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Configuration;
-using Microsoft.Practices.Unity;
-using Microsoft.Practices.Unity.Configuration;
-
-namespace EnsembleFX.Core.Dependency
+﻿namespace EnsembleFX.Core.Dependency
 {
     /// <summary>
     /// Represents a class to support Microsoft.Practices.Unity functionality.
@@ -67,7 +60,7 @@ namespace EnsembleFX.Core.Dependency
     //    }
 
     //    #region Public Methods    
-   
+
     //    /// <summary>
     //    /// Resolves the Type t from registration
     //    /// </summary>
@@ -87,7 +80,7 @@ namespace EnsembleFX.Core.Dependency
     //    {
     //        return container.Resolve<T>();
     //    }
-       
+
 
     //    /// <summary>
     //    /// Resolve an instance of the requested type with the given name from the container.

@@ -1,15 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.ServiceModel;
-using System.ServiceModel.Channels;
-using System.ServiceModel.Dispatcher;
-using System.Text;
-using System.ServiceModel.Description;
-using Microsoft.Practices.Unity;
-
-namespace EnsembleFX.Core.Dependency
+﻿namespace EnsembleFX.Core.Dependency
 {
     /// <summary>
     /// Dependency injection Service Behavior
@@ -27,7 +16,7 @@ namespace EnsembleFX.Core.Dependency
     //    //#endregion
 
     //    //#region Private Members
-        
+
     //    //private ServiceHost serviceHost = null;
 
     //    //#endregion
@@ -42,7 +31,7 @@ namespace EnsembleFX.Core.Dependency
 
     //    //public void Validate(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase)
     //    //{
-            
+
     //    //}
 
     //    //public void AddBindingParameters(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase, Collection<ServiceEndpoint> endpoints, BindingParameterCollection bindingParameters)

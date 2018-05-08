@@ -1,9 +1,3 @@
-using System.Collections.Generic;
-using System.Configuration;
-using Microsoft.Practices.Unity;
-using Microsoft.Practices.Unity.Configuration;
-using System;
-
 namespace EnsembleFX.Core.Dependency
 {
     //public interface IDependencyManager

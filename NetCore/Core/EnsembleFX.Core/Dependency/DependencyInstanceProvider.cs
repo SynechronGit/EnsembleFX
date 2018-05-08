@@ -1,11 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.ServiceModel;
-using System.ServiceModel.Channels;
-using System.ServiceModel.Dispatcher;
-using Microsoft.Practices.Unity;
-
-namespace EnsembleFX.Core.Dependency
+﻿namespace EnsembleFX.Core.Dependency
 {
     /// <summary>
     /// 
@@ -17,7 +10,7 @@ namespace EnsembleFX.Core.Dependency
 
     //    public DependencyInstanceProvider() : this(null) 
     //    { 
-            
+
     //    } 
 
     //    public DependencyInstanceProvider(Type type)
@@ -29,7 +22,7 @@ namespace EnsembleFX.Core.Dependency
     //    #endregion
 
     //    #region Private Members
-        
+
     //    private IDependencyManager dependencyManager;
 
     //    #endregion
