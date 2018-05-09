@@ -92,16 +92,16 @@ namespace EnsembleFX.Core.Helpers
             return _client.GetAsync(resource).Result;
         }
 
-        //public HttpResponseMessage ExecutePost(string resource, Input model)
-        //{
-        //    var task = Task.Factory.StartNew(() => _client.PostAsJsonAsync(resource, model));
-        //    task.Wait();
-        //    if (task.IsCompleted)
-        //    {
-        //        return task.Result.Result;
-        //    }
-        //    return null;
-        //}
+        public HttpResponseMessage ExecutePost(string resource, Input model)
+        {
+            var task = Task.Factory.StartNew(() => _client.PostAsJsonAsync(resource, model));
+            task.Wait();
+            if (task.IsCompleted)
+            {
+                return task.Result.Result;
+            }
+            return null;
+        }
 
         public void ExecutePostHttpContent(string resource, Input model)
         {
