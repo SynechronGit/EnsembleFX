@@ -119,6 +119,15 @@ namespace EnsembleFX.Repository
             return blobUrl;
         }
 
+        public MemoryStream GetBlob(string key)
+        {
+            MemoryStream blobStream = new MemoryStream();
+            blockBlob = blobContainer.GetBlockBlobReference(key);
+            blockBlob.DownloadToStreamAsync(blobStream).Wait();
+
+            return blobStream;
+        }
+
         public void DeleteBlog(string key)
         {
             blockBlob = blobContainer.GetBlockBlobReference(key);

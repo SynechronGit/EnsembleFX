@@ -12,5 +12,6 @@ namespace EnsembleFX.Repository
         CloudBlockBlob GetBlockBlobReference(string blobName);
         string UploadFileToBlob(string key, Stream contentStream, string contentType);
         void DeleteBlog(string key);
+        MemoryStream GetBlob(string key);
     }
 }
