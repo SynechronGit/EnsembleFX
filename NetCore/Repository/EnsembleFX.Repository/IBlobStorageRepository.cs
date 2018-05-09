@@ -1,8 +1,5 @@
 ﻿using Microsoft.WindowsAzure.Storage.Blob;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace EnsembleFX.Repository
 {
@@ -13,5 +10,7 @@ namespace EnsembleFX.Repository
         string GetTextBlob(string key);
         string GetBlobURL(string key);
         CloudBlockBlob GetBlockBlobReference(string blobName);
+        string UploadFileToBlob(string key, Stream contentStream, string contentType);
+        void DeleteBlog(string key);
     }
 }

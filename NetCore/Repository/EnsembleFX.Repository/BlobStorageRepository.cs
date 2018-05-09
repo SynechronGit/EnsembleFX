@@ -3,9 +3,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace EnsembleFX.Repository
 {
@@ -63,6 +61,7 @@ namespace EnsembleFX.Repository
                 File.Delete(fileName);
             }
         }
+
         public void UploadBlob(string key, Stream contentStream)
         {
             if (contentStream == null)
@@ -77,13 +76,39 @@ namespace EnsembleFX.Repository
         public string GetTextBlob(string key)
         {
             string returnText = string.Empty;
-
             MemoryStream blobStream = new MemoryStream();
             blockBlob = blobContainer.GetBlockBlobReference(key);
             blockBlob.DownloadToStreamAsync(blobStream).Wait();
             returnText = System.Text.Encoding.UTF8.GetString(blobStream.ToArray());
-
             return returnText;
+        }
+
+        public string UploadFileToBlob(string key, Stream contentStream, string contentType)
+        {
+            string ImageUrl = string.Empty;
+            if (contentStream == null)
+                return string.Empty;
+
+            contentStream.Seek(0, SeekOrigin.Begin);
+
+            blockBlob = blobContainer.GetBlockBlobReference(key);
+            blockBlob.UploadFromStreamAsync(contentStream).Wait();
+
+            blockBlob.FetchAttributesAsync().Wait();
+            if (!string.IsNullOrEmpty(contentType))
+            {
+                blockBlob.Properties.ContentType = contentType;
+            }
+            else
+            {
+                blockBlob.Properties.ContentType = "image/tiff";
+            }
+            blockBlob.SetPropertiesAsync().Wait();
+            var uriBuilder = new UriBuilder(blockBlob.Uri);
+            uriBuilder.Scheme = "https";
+            ImageUrl = uriBuilder.ToString();
+
+            return ImageUrl;
         }
 
         public string GetBlobURL(string key)
@@ -92,6 +117,12 @@ namespace EnsembleFX.Repository
             blockBlob = blobContainer.GetBlockBlobReference(key);
             blobUrl = blockBlob.Uri.ToString();
             return blobUrl;
+        }
+
+        public void DeleteBlog(string key)
+        {
+            blockBlob = blobContainer.GetBlockBlobReference(key);
+            blockBlob.DeleteAsync().Wait();
         }
 
         public CloudBlockBlob GetBlockBlobReference(string blobName)
