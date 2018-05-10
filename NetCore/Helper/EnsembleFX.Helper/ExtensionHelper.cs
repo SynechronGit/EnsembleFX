@@ -18,7 +18,24 @@ namespace EnsembleFX.Helper
         {
             return (T)JsonConvert.DeserializeObject(jsonObject, typeof(T));
         }
+        public static string TrimNewLine(this string inputData)
+        {
+            if (inputData.Length > 4)
+            {
+                //string result = string.Empty;
+                string isNewLine = inputData.Substring(inputData.Length - 4);
 
+                if (isNewLine == "\\r\\n")
+                {
+                    inputData = inputData.Remove(inputData.Length - 4);
+                }
+                else if (isNewLine == "r\\n\"")
+                {
+                    inputData = inputData.Remove(inputData.Length - 5);
+                }
+            }
+            return inputData;
+        }
         public static DateTime? ToNullableDateTime(this string dateTimeString)
         {
             DateTime resultDateTime = new DateTime();
