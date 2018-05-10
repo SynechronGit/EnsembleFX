@@ -1,27 +1,22 @@
 ﻿using EnsembleFX.Logging;
-using EnsembleFX.Logging.Enums;
 using EnsembleFX.Messaging;
-using EnsembleFX.Messaging.Bus;
 using EnsembleFX.Messaging.Model;
 using EnsembleFX.Messaging.Model.Enums;
 using EnsembleFX.Repository;
 using EnsembleFX.Repository.Model;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Options;
 //using EnsembleFX.Shared;
 //using Microsoft.Azure;
 using Microsoft.Azure.ServiceBus;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 //using STEPIN.Entities;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace EnsembleFX.Helper
 {
@@ -150,7 +145,8 @@ namespace EnsembleFX.Helper
                 QueueClient client = new QueueClient(serviceBusConnectionString, queue, ReceiveMode.PeekLock);
                 client.SendAsync(message);
                 await client.CloseAsync()
-;            }
+;
+            }
             catch (Exception)
             {
                 throw;
@@ -297,46 +293,56 @@ namespace EnsembleFX.Helper
         //}
 
 
-        //public int GetQueueCount(string connectionString)
-        //{
-        //    NamespaceManager namespaceManager = NamespaceManager.CreateFromConnectionString(connectionString);
-        //    return namespaceManager.GetQueues().Count();
-        //}
+        public int GetQueueCount(string connectionString)
+        {
+            //TODO:: Need to Alternative of Microsoft.Azure for.Net Core
 
-        //public List<AzureQueueModel> GetQueueDetails(string connectionString)
-        //{
-        //    NamespaceManager namespaceManager = NamespaceManager.CreateFromConnectionString(connectionString);
+            //NamespaceManager namespaceManager = NamespaceManager.CreateFromConnectionString(connectionString);
+            //return namespaceManager.GetQueues().Count();
 
-        //    List<QueueDescription> _queues = namespaceManager.GetQueues().ToList();
+            return 0;
+        }
 
-        //    List<AzureQueueModel> _azureQueueModelCollection = new List<AzureQueueModel>();
+        public List<AzureQueueModel> GetQueueDetails(string connectionString)
+        {
+            //TODO:: Need to Alternative of Microsoft.Azure for.Net Core
 
-        //    _queues.ForEach(delegate (QueueDescription messageQueue)
-        //    {
-        //        AzureQueueModel _azureQueueModel = new AzureQueueModel();
-        //        _azureQueueModel.QueueName = messageQueue.Path;
-        //        _azureQueueModel.MessageCount = messageQueue.MessageCount;
-        //        _azureQueueModelCollection.Add(_azureQueueModel);
-        //    }
-        //    );
+            //NamespaceManager namespaceManager = NamespaceManager.CreateFromConnectionString(connectionString);
 
-        //    return _azureQueueModelCollection;
-        //}
-        //public async Task<List<AzureMessageModel>> GetMessages(string connectionString,string QueueName)
-        //{
-        //    List<AzureQueueModel> _azureQueueModelCollection = new List<AzureQueueModel>();
+            //List<QueueDescription> _queues = namespaceManager.GetQueues().ToList();
 
-        //    NamespaceManager namespaceManager = NamespaceManager.CreateFromConnectionString(connectionString);
+            //List<AzureQueueModel> _azureQueueModelCollection = new List<AzureQueueModel>();
 
-        //    QueueClient _queueClient = QueueClient.CreateFromConnectionString(connectionString, QueueName);
+            //_queues.ForEach(delegate (QueueDescription messageQueue)
+            //{
+            //    AzureQueueModel _azureQueueModel = new AzureQueueModel();
+            //    _azureQueueModel.QueueName = messageQueue.Path;
+            //    _azureQueueModel.MessageCount = messageQueue.MessageCount;
+            //    _azureQueueModelCollection.Add(_azureQueueModel);
+            //}
 
-        //    long _queueCount = namespaceManager.GetQueue(QueueName).MessageCount;
+            //return _azureQueueModelCollection;
 
-        //    List<AzureMessageModel> _azureMessageModelCollection = await GetAzureMessages(_queueClient, ConvertLongtoInt(_queueCount));
+            return null;
+        }
 
+        public async Task<List<AzureMessageModel>> GetMessages(string connectionString, string QueueName)
+        {
+            //TODO:: Need to Alternative of Microsoft.Azure for.Net Core
+            //    List<AzureQueueModel> _azureQueueModelCollection = new List<AzureQueueModel>();
 
-        //    return _azureMessageModelCollection;
-        //}
+            //    NamespaceManager namespaceManager = NamespaceManager.CreateFromConnectionString(connectionString);
+
+            //    QueueClient _queueClient = QueueClient.CreateFromConnectionString(connectionString, QueueName);
+
+            //    long _queueCount = namespaceManager.GetQueue(QueueName).MessageCount;
+
+            //    List<AzureMessageModel> _azureMessageModelCollection = await GetAzureMessages(_queueClient, ConvertLongtoInt(_queueCount));
+
+            //    return _azureMessageModelCollection;
+
+            return null;
+        }
 
         //private async Task<List<AzureMessageModel>> GetAzureMessages(QueueClient _queueClient, int _queueCount)
         //{
@@ -542,8 +548,8 @@ namespace EnsembleFX.Helper
             return generic.Invoke(_Message, null);
         }
 
-        private LogModel CreateLogModel(string message,string stacktrace, string username, string requestAbsoluteUrl)
-        {            
+        private LogModel CreateLogModel(string message, string stacktrace, string username, string requestAbsoluteUrl)
+        {
             LogModel logmodel = new LogModel();
             logmodel.StackTrace = stacktrace;
             logmodel.Message = message;
