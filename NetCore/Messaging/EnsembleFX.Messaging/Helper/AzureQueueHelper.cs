@@ -108,29 +108,29 @@ namespace EnsembleFX.Helper
         //    }
         //}
 
-        //public void SendMessage(IMessageEnvelope envelope)
-        //{
-        //    topicClient = TopicClient.Create(TopicName);
-        //    Message Message = CreateMessage(envelope);
-        //    try
-        //    {
-        //        topicClient.Send(Message);
-        //        topicClient.Close();
-        //    }
-        //    catch (MessagingException e)
-        //    {
-        //        if (!e.IsTransient)
-        //        {
-        //            throw;
-        //        }
-        //        else
-        //        {
-        //            Thread.Sleep(2000);
-        //            topicClient.Send(Message);
-        //            topicClient.Close();
-        //        }
-        //    }
-        //}
+        public void SendMessage(IMessageEnvelope envelope)
+        {
+            //topicClient = TopicClient.Create(TopicName);
+            //Message Message = CreateMessage(envelope);
+            //try
+            //{
+            //    topicClient.Send(Message);
+            //    topicClient.Close();
+            //}
+            //catch (MessagingException e)
+            //{
+            //    if (!e.IsTransient)
+            //    {
+            //        throw;
+            //    }
+            //    else
+            //    {
+            //        Thread.Sleep(2000);
+            //        topicClient.Send(Message);
+            //        topicClient.Close();
+            //    }
+            //}
+        }
 
         /// <summary>
         /// Send Message to Azure Queue
@@ -275,22 +275,23 @@ namespace EnsembleFX.Helper
         /// </summary>
         /// <param name="queueName"></param>
         /// <returns></returns>
-        //public void CreateQueue(string serviceBusConnectionString, string queueName)
-        //{
-        //    var namespaceManager = NamespaceManager.CreateFromConnectionString(serviceBusConnectionString);
+        public void CreateQueue(string serviceBusConnectionString, string queueName)
+        {
+            //var namespaceManager = NamespaceManager.CreateFromConnectionString(serviceBusConnectionString);
 
-        //    // Create if it does not exists
-        //    if (!namespaceManager.QueueExists(queueName))
-        //    {
-        //        namespaceManager.CreateQueue(queueName);
-        //    }
-        //}
+            //// Create if it does not exists
+            //if (!namespaceManager.QueueExists(queueName))
+            //{
+            //    namespaceManager.CreateQueue(queueName);
+            //}
+        }
 
-        //public bool QueueExits(string serviceBusConnectionString, string queueName)
-        //{
-        //    var namespaceManager = NamespaceManager.CreateFromConnectionString(serviceBusConnectionString);
-        //    return namespaceManager.QueueExists(queueName);
-        //}
+        public bool QueueExits(string serviceBusConnectionString, string queueName)
+        {
+            //var namespaceManager = NamespaceManager.CreateFromConnectionString(serviceBusConnectionString);
+            //return namespaceManager.QueueExists(queueName);
+            return false;
+        }
 
 
         public int GetQueueCount(string connectionString)
