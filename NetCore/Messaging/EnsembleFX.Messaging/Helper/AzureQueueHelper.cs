@@ -1,27 +1,22 @@
 ﻿using EnsembleFX.Logging;
-using EnsembleFX.Logging.Enums;
 using EnsembleFX.Messaging;
-using EnsembleFX.Messaging.Bus;
 using EnsembleFX.Messaging.Model;
 using EnsembleFX.Messaging.Model.Enums;
 using EnsembleFX.Repository;
 using EnsembleFX.Repository.Model;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Options;
 //using EnsembleFX.Shared;
 //using Microsoft.Azure;
 using Microsoft.Azure.ServiceBus;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 //using STEPIN.Entities;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace EnsembleFX.Helper
 {
@@ -113,29 +108,29 @@ namespace EnsembleFX.Helper
         //    }
         //}
 
-        //public void SendMessage(IMessageEnvelope envelope)
-        //{
-        //    topicClient = TopicClient.Create(TopicName);
-        //    Message Message = CreateMessage(envelope);
-        //    try
-        //    {
-        //        topicClient.Send(Message);
-        //        topicClient.Close();
-        //    }
-        //    catch (MessagingException e)
-        //    {
-        //        if (!e.IsTransient)
-        //        {
-        //            throw;
-        //        }
-        //        else
-        //        {
-        //            Thread.Sleep(2000);
-        //            topicClient.Send(Message);
-        //            topicClient.Close();
-        //        }
-        //    }
-        //}
+        public void SendMessage(IMessageEnvelope envelope)
+        {
+            //topicClient = TopicClient.Create(TopicName);
+            //Message Message = CreateMessage(envelope);
+            //try
+            //{
+            //    topicClient.Send(Message);
+            //    topicClient.Close();
+            //}
+            //catch (MessagingException e)
+            //{
+            //    if (!e.IsTransient)
+            //    {
+            //        throw;
+            //    }
+            //    else
+            //    {
+            //        Thread.Sleep(2000);
+            //        topicClient.Send(Message);
+            //        topicClient.Close();
+            //    }
+            //}
+        }
 
         /// <summary>
         /// Send Message to Azure Queue
@@ -150,7 +145,8 @@ namespace EnsembleFX.Helper
                 QueueClient client = new QueueClient(serviceBusConnectionString, queue, ReceiveMode.PeekLock);
                 client.SendAsync(message);
                 await client.CloseAsync()
-;            }
+;
+            }
             catch (Exception)
             {
                 throw;
@@ -172,9 +168,8 @@ namespace EnsembleFX.Helper
                 byte[] objectBytes = Encoding.UTF8.GetBytes(objectJson);
                 Message queueMessage = new Message(objectBytes);
                 QueueClient client = new QueueClient(serviceBusConnectionString, queue, ReceiveMode.PeekLock);
-                client.SendAsync(queueMessage);
-                await client.CloseAsync()
-;
+                client.SendAsync(queueMessage).Wait();//As per observation if we don't wait, No message added to queue. Try and check after removing Wait() call.
+                await client.CloseAsync();
             }
             catch (Exception)
             {
@@ -279,64 +274,75 @@ namespace EnsembleFX.Helper
         /// </summary>
         /// <param name="queueName"></param>
         /// <returns></returns>
-        //public void CreateQueue(string serviceBusConnectionString, string queueName)
-        //{
-        //    var namespaceManager = NamespaceManager.CreateFromConnectionString(serviceBusConnectionString);
+        public void CreateQueue(string serviceBusConnectionString, string queueName)
+        {
+            //var namespaceManager = NamespaceManager.CreateFromConnectionString(serviceBusConnectionString);
 
-        //    // Create if it does not exists
-        //    if (!namespaceManager.QueueExists(queueName))
-        //    {
-        //        namespaceManager.CreateQueue(queueName);
-        //    }
-        //}
+            //// Create if it does not exists
+            //if (!namespaceManager.QueueExists(queueName))
+            //{
+            //    namespaceManager.CreateQueue(queueName);
+            //}
+        }
 
-        //public bool QueueExits(string serviceBusConnectionString, string queueName)
-        //{
-        //    var namespaceManager = NamespaceManager.CreateFromConnectionString(serviceBusConnectionString);
-        //    return namespaceManager.QueueExists(queueName);
-        //}
-
-
-        //public int GetQueueCount(string connectionString)
-        //{
-        //    NamespaceManager namespaceManager = NamespaceManager.CreateFromConnectionString(connectionString);
-        //    return namespaceManager.GetQueues().Count();
-        //}
-
-        //public List<AzureQueueModel> GetQueueDetails(string connectionString)
-        //{
-        //    NamespaceManager namespaceManager = NamespaceManager.CreateFromConnectionString(connectionString);
-
-        //    List<QueueDescription> _queues = namespaceManager.GetQueues().ToList();
-
-        //    List<AzureQueueModel> _azureQueueModelCollection = new List<AzureQueueModel>();
-
-        //    _queues.ForEach(delegate (QueueDescription messageQueue)
-        //    {
-        //        AzureQueueModel _azureQueueModel = new AzureQueueModel();
-        //        _azureQueueModel.QueueName = messageQueue.Path;
-        //        _azureQueueModel.MessageCount = messageQueue.MessageCount;
-        //        _azureQueueModelCollection.Add(_azureQueueModel);
-        //    }
-        //    );
-
-        //    return _azureQueueModelCollection;
-        //}
-        //public async Task<List<AzureMessageModel>> GetMessages(string connectionString,string QueueName)
-        //{
-        //    List<AzureQueueModel> _azureQueueModelCollection = new List<AzureQueueModel>();
-
-        //    NamespaceManager namespaceManager = NamespaceManager.CreateFromConnectionString(connectionString);
-
-        //    QueueClient _queueClient = QueueClient.CreateFromConnectionString(connectionString, QueueName);
-
-        //    long _queueCount = namespaceManager.GetQueue(QueueName).MessageCount;
-
-        //    List<AzureMessageModel> _azureMessageModelCollection = await GetAzureMessages(_queueClient, ConvertLongtoInt(_queueCount));
+        public bool QueueExits(string serviceBusConnectionString, string queueName)
+        {
+            //var namespaceManager = NamespaceManager.CreateFromConnectionString(serviceBusConnectionString);
+            //return namespaceManager.QueueExists(queueName);
+            return false;
+        }
 
 
-        //    return _azureMessageModelCollection;
-        //}
+        public int GetQueueCount(string connectionString)
+        {
+            //TODO:: Need to Alternative of Microsoft.Azure for.Net Core
+
+            //NamespaceManager namespaceManager = NamespaceManager.CreateFromConnectionString(connectionString);
+            //return namespaceManager.GetQueues().Count();
+
+            return 0;
+        }
+
+        public List<AzureQueueModel> GetQueueDetails(string connectionString)
+        {
+            //TODO:: Need to Alternative of Microsoft.Azure for.Net Core
+
+            //NamespaceManager namespaceManager = NamespaceManager.CreateFromConnectionString(connectionString);
+
+            //List<QueueDescription> _queues = namespaceManager.GetQueues().ToList();
+
+            //List<AzureQueueModel> _azureQueueModelCollection = new List<AzureQueueModel>();
+
+            //_queues.ForEach(delegate (QueueDescription messageQueue)
+            //{
+            //    AzureQueueModel _azureQueueModel = new AzureQueueModel();
+            //    _azureQueueModel.QueueName = messageQueue.Path;
+            //    _azureQueueModel.MessageCount = messageQueue.MessageCount;
+            //    _azureQueueModelCollection.Add(_azureQueueModel);
+            //}
+
+            //return _azureQueueModelCollection;
+
+            return null;
+        }
+
+        public async Task<List<AzureMessageModel>> GetMessages(string connectionString, string QueueName)
+        {
+            //TODO:: Need to Alternative of Microsoft.Azure for.Net Core
+            //    List<AzureQueueModel> _azureQueueModelCollection = new List<AzureQueueModel>();
+
+            //    NamespaceManager namespaceManager = NamespaceManager.CreateFromConnectionString(connectionString);
+
+            //    QueueClient _queueClient = QueueClient.CreateFromConnectionString(connectionString, QueueName);
+
+            //    long _queueCount = namespaceManager.GetQueue(QueueName).MessageCount;
+
+            //    List<AzureMessageModel> _azureMessageModelCollection = await GetAzureMessages(_queueClient, ConvertLongtoInt(_queueCount));
+
+            //    return _azureMessageModelCollection;
+
+            return null;
+        }
 
         //private async Task<List<AzureMessageModel>> GetAzureMessages(QueueClient _queueClient, int _queueCount)
         //{
@@ -542,8 +548,8 @@ namespace EnsembleFX.Helper
             return generic.Invoke(_Message, null);
         }
 
-        private LogModel CreateLogModel(string message,string stacktrace, string username, string requestAbsoluteUrl)
-        {            
+        private LogModel CreateLogModel(string message, string stacktrace, string username, string requestAbsoluteUrl)
+        {
             LogModel logmodel = new LogModel();
             logmodel.StackTrace = stacktrace;
             logmodel.Message = message;
