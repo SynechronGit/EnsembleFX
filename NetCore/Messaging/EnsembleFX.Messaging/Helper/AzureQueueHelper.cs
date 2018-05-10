@@ -157,6 +157,31 @@ namespace EnsembleFX.Helper
             }
         }
 
+
+        /// <summary>
+        /// Send Message to Azure Queue
+        /// </summary>
+        /// <param name="serviceBusConnectionString">Service Bus Connection string</param>
+        /// <param name="queue">queue name</param>
+        /// <param name="message">Brokered Message</param>
+        public async void SendMessage<T>(string serviceBusConnectionString, string queue, T messageObject)
+        {
+            try
+            {
+                string objectJson = this.SerializeObjectToJson<T>(messageObject);
+                byte[] objectBytes = Encoding.UTF8.GetBytes(objectJson);
+                Message queueMessage = new Message(objectBytes);
+                QueueClient client = new QueueClient(serviceBusConnectionString, queue, ReceiveMode.PeekLock);
+                client.SendAsync(queueMessage);
+                await client.CloseAsync()
+;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         /// <summary>
         /// Reveive Brokered Message
         /// </summary>
