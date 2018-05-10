@@ -168,9 +168,8 @@ namespace EnsembleFX.Helper
                 byte[] objectBytes = Encoding.UTF8.GetBytes(objectJson);
                 Message queueMessage = new Message(objectBytes);
                 QueueClient client = new QueueClient(serviceBusConnectionString, queue, ReceiveMode.PeekLock);
-                client.SendAsync(queueMessage);
-                await client.CloseAsync()
-;
+                client.SendAsync(queueMessage).Wait();//As per observation if we don't wait, No message added to queue. Try and check after removing Wait() call.
+                await client.CloseAsync();
             }
             catch (Exception)
             {
