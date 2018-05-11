@@ -51,7 +51,7 @@ namespace EnsembleFX.Core.Helpers
             //                   ("password", appSettings.Value.ServiceAccountPassword));
 
             //HttpContent content = new FormUrlEncodedContent(postData);
-           
+
             //if (!byPassAnonymousRequest)
             //{
             //    string result = string.Empty;
@@ -87,20 +87,26 @@ namespace EnsembleFX.Core.Helpers
         #endregion
 
         #region Public Methods
-        public HttpResponseMessage ExecuteGet(string resource)
+        public void ExecuteGet(string resource)
+        {
+            HttpResponseMessage response = _client.GetAsync(resource).Result;
+            prepareResult(response);
+        }
+
+        public HttpResponseMessage ExecuteGetWithResponse(string resource)
         {
             return _client.GetAsync(resource).Result;
         }
 
-        public HttpResponseMessage ExecutePost(string resource, Input model)
+        public void ExecutePost(string resource, Input model)
         {
             var task = Task.Factory.StartNew(() => _client.PostAsJsonAsync(resource, model));
             task.Wait();
             if (task.IsCompleted)
             {
-                return task.Result.Result;
+                HttpResponseMessage response = task.Result.Result;
+                prepareResult(response);
             }
-            return null;
         }
 
         public void ExecutePostHttpContent(string resource, Input model)
@@ -114,20 +120,21 @@ namespace EnsembleFX.Core.Helpers
             }
         }
 
-        //public HttpResponseMessage ExecutePut(string resource, Input model)
+        //public void ExecutePut(string resource, Input model)
         //{
         //    var task = Task.Factory.StartNew(() => _client.PutAsJsonAsync(resource, model));
         //    task.Wait();
         //    if (task.IsCompleted)
         //    {
-        //        return task.Result.Result;
+        //        HttpResponseMessage response = task.Result.Result;
+        //        prepareResult(response);
         //    }
-        //    return null;
         //}
 
-        public HttpResponseMessage ExecuteDelete(string resource)
+        public void ExecuteDelete(string resource)
         {
-            return _client.DeleteAsync(resource).Result;
+            HttpResponseMessage response = _client.DeleteAsync(resource).Result;
+            prepareResult(response);
         }
 
         public void Dispose()
@@ -147,8 +154,11 @@ namespace EnsembleFX.Core.Helpers
                 Response = Convert.ToString(response);
                 if (typeof(Output) == typeof(Stream))
                     Result = (Output)(object)(response.Content.ReadAsStreamAsync().Result);
+                else if (response.Content.Headers.ContentType.MediaType == "application/json")
+                    Result = response.Content.ReadAsJsonAsync<Output>().Result;
                 else
-                    Result = (Output)(object)response.Content.ReadAsByteArrayAsync().Result;
+                    Result = (Output)(object)(response.Content.ReadAsStringAsync().Result);
+
             }
             else
             {
