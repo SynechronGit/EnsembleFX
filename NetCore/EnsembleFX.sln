@@ -59,6 +59,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EnsembleFX.ApiProxy", "ApiP
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EnsembleFX.Pluralization", "Pluralization\EnsembleFX.Pluralization\EnsembleFX.Pluralization.csproj", "{81F5DC2D-A20F-45AF-A95A-B5AC4BFE23D8}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EnsembleFX.DataFrame", "DataFrame\EnsembleFX.DataFrame\EnsembleFX.DataFrame.csproj", "{37397133-ED2F-4FF0-A585-6BC24260DCC6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -177,6 +179,10 @@ Global
 		{81F5DC2D-A20F-45AF-A95A-B5AC4BFE23D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{81F5DC2D-A20F-45AF-A95A-B5AC4BFE23D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{81F5DC2D-A20F-45AF-A95A-B5AC4BFE23D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37397133-ED2F-4FF0-A585-6BC24260DCC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37397133-ED2F-4FF0-A585-6BC24260DCC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37397133-ED2F-4FF0-A585-6BC24260DCC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37397133-ED2F-4FF0-A585-6BC24260DCC6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
