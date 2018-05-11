@@ -109,7 +109,7 @@ namespace EnsembleFX.DataFrame.Adapters
                 //  _cloudTable.Execute(TableOperation.InsertOrReplace(entity));
 
                 //list.Add(entity);
-                var result = Insert(entity);
+                var result = Insert(entity).Result;
             }
 
             //BatchInsert(list);
