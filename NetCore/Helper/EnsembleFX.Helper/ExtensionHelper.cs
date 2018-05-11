@@ -119,6 +119,16 @@ namespace EnsembleFX.Helper
             return Regex.Replace(str, "[^a-zA-Z0-9_]+", " ", RegexOptions.Compiled);
         }
 
+        public static string ReplaceSpecialCharactersWithEmptyString(this string str)
+        {
+            return Regex.Replace(str, "[^a-zA-Z0-9_]+", "", RegexOptions.Compiled);
+        }
+
+        public static string ReplaceSpecialCharactersWithSingleSpace(this string str)
+        {
+            return Regex.Replace(str, "[^a-zA-Z0-9_]+", " ", RegexOptions.Compiled);
+        }
+
         public static string ConvertToHashKey(this string inputString)
         {
             if (string.IsNullOrWhiteSpace(inputString))
