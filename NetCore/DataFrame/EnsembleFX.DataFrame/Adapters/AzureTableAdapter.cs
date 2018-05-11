@@ -68,9 +68,10 @@ namespace EnsembleFX.DataFrame.Adapters
 
         }
 
-        public async void CreateTable()
+        public async Task<bool> CreateTable()
         {
             await _cloudTable.CreateIfNotExistsAsync();
+            return true;
         }
 
         public void Write(DataSet data)
@@ -108,7 +109,7 @@ namespace EnsembleFX.DataFrame.Adapters
                 //  _cloudTable.Execute(TableOperation.InsertOrReplace(entity));
 
                 //list.Add(entity);
-                Insert(entity);
+                var result = Insert(entity);
             }
 
             //BatchInsert(list);
@@ -120,7 +121,7 @@ namespace EnsembleFX.DataFrame.Adapters
         /// Insert an record
         /// </summary>
         /// <param name="record">The record to insert</param>
-        private async void Insert(dynamic record)
+        private async Task<bool> Insert(dynamic record)
         {
             if (record == null)
             {
@@ -129,6 +130,7 @@ namespace EnsembleFX.DataFrame.Adapters
 
             var operation = TableOperation.InsertOrMerge(record);
             await _cloudTable.ExecuteAsync(operation);
+            return true;
         }
 
         /// <summary>
