@@ -258,5 +258,33 @@ namespace EnsembleFX.Helper
             return attribute == null ? value.ToString() : attribute.Description;
         }
 
+
+        public static string StringConcat(string fullcomprehension, string comprehension)
+        {
+            if (string.IsNullOrEmpty(fullcomprehension))
+            {
+                fullcomprehension = comprehension.Replace('"', ' ').Trim();
+            }
+            else
+            {
+                fullcomprehension = string.Concat(fullcomprehension.Trim(), @"\r\n", comprehension.Replace('"', ' ').Trim());
+            }
+            return fullcomprehension;
+        }
+
+        public static string GetCreateRequestBodyString(string lineSeparator, string tabSepartor, string botName, string fullWidgetText)
+        {
+
+            string jsonString = "{ \"name\" : \"" + botName + "\", \"qnaPairs\": [{ \"question\":\"";
+
+            jsonString = jsonString + fullWidgetText.Replace(lineSeparator, "\"}, { \"question\":\"");
+
+            jsonString = jsonString.Replace(tabSepartor, "\",\"answer\":\"");
+
+            jsonString = jsonString + "\"}]}";
+
+            return jsonString;
+
+        }
     }
 }
