@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Core\EnsembleFX.Core\EnsembleFX.Core.csproj" />
     <ProjectReference Include="..\EnsembleFX.Security.Model\EnsembleFX.Security.Model.csproj" />
   </ItemGroup>
 

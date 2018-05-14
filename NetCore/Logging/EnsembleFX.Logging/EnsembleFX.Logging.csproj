@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Core\EnsembleFX.Core\EnsembleFX.Core.csproj" />
     <ProjectReference Include="..\..\Storage\EnsembleFX.StorageAdapter\EnsembleFX.StorageAdapter.csproj" />
     <ProjectReference Include="..\EnsembleFX.Logging.Model\EnsembleFX.Logging.Model.csproj" />
   </ItemGroup>

@@ -17,11 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EnsembleFX.StorageAdapter",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EnsembleFX.StorageAdapter.Model", "Storage\EnsembleFX.StorageAdapter.Model\EnsembleFX.StorageAdapter.Model.csproj", "{E96A46AC-289E-4343-AAF1-68AC20BDCDEE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EnsembleFX.Filters", "Filters\EnsembleFX.Filters\EnsembleFX.Filters.csproj", "{2CC09BC0-8938-431D-9343-B77F61A5CA31}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EnsembleFX.Repository", "Repository\EnsembleFX.Repository\EnsembleFX.Repository.csproj", "{404925DE-EBAA-4371-AF0B-C9C985500C71}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EnsembleFX.Helper", "Helper\EnsembleFX.Helper\EnsembleFX.Helper.csproj", "{B93F937F-D0B6-4A67-90C0-95636935A5FF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EnsembleFX.Caching", "Caching\EnsembleFX.Caching\EnsembleFX.Caching.csproj", "{21DE7CB4-C1F1-4DF9-91DB-D522018A7157}"
 EndProject
@@ -93,18 +89,10 @@ Global
 		{E96A46AC-289E-4343-AAF1-68AC20BDCDEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E96A46AC-289E-4343-AAF1-68AC20BDCDEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E96A46AC-289E-4343-AAF1-68AC20BDCDEE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2CC09BC0-8938-431D-9343-B77F61A5CA31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2CC09BC0-8938-431D-9343-B77F61A5CA31}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2CC09BC0-8938-431D-9343-B77F61A5CA31}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2CC09BC0-8938-431D-9343-B77F61A5CA31}.Release|Any CPU.Build.0 = Release|Any CPU
 		{404925DE-EBAA-4371-AF0B-C9C985500C71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{404925DE-EBAA-4371-AF0B-C9C985500C71}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{404925DE-EBAA-4371-AF0B-C9C985500C71}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{404925DE-EBAA-4371-AF0B-C9C985500C71}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B93F937F-D0B6-4A67-90C0-95636935A5FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B93F937F-D0B6-4A67-90C0-95636935A5FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B93F937F-D0B6-4A67-90C0-95636935A5FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B93F937F-D0B6-4A67-90C0-95636935A5FF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{21DE7CB4-C1F1-4DF9-91DB-D522018A7157}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{21DE7CB4-C1F1-4DF9-91DB-D522018A7157}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{21DE7CB4-C1F1-4DF9-91DB-D522018A7157}.Release|Any CPU.ActiveCfg = Release|Any CPU

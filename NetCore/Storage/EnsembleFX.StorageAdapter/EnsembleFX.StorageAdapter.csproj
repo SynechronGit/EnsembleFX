@@ -10,13 +10,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Core\EnsembleFX.Core\EnsembleFX.Core.csproj" />
     <ProjectReference Include="..\EnsembleFX.StorageAdapter.Model\EnsembleFX.StorageAdapter.Model.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="EnsembleFX.Filters">
-      <HintPath>..\..\Filters\EnsembleFX.Filters\bin\Debug\netcoreapp2.0\EnsembleFX.Filters.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
  

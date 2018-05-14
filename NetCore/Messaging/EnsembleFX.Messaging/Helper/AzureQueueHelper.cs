@@ -18,7 +18,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace EnsembleFX.Helper
+namespace EnsembleFX.Core.Helpers
 {
     public class AzureQueueHelper
     {
