@@ -5,7 +5,7 @@ using EnsembleFX.Core.Helpers;
 using Microsoft.Extensions.Options;
 using EnsembleFX.Core.Model;
 
-namespace EnsembleFX.ApiProxy
+namespace EnsembleFX.Core.ApiProxy
 {
     public class RuntimeApiProxy
     {
