@@ -1,13 +1,10 @@
 ﻿using EnsembleFX.Core.Model;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Globalization;
 using System.IO;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace EnsembleFX.Core.Helpers
@@ -120,16 +117,27 @@ namespace EnsembleFX.Core.Helpers
             }
         }
 
-        //public void ExecutePut(string resource, Input model)
-        //{
-        //    var task = Task.Factory.StartNew(() => _client.PutAsJsonAsync(resource, model));
-        //    task.Wait();
-        //    if (task.IsCompleted)
-        //    {
-        //        HttpResponseMessage response = task.Result.Result;
-        //        prepareResult(response);
-        //    }
-        //}
+        public void ExecutePutHttpContent(string resource, Input model)
+        {
+            var task = Task.Factory.StartNew(() => _client.PutAsync(resource, model as HttpContent));
+            task.Wait();
+            if (task.IsCompleted)
+            {
+                HttpResponseMessage response = task.Result.Result;
+                prepareResult(response);
+            }
+        }
+
+        public void ExecutePut(string resource, Input model)
+        {
+            var task = Task.Factory.StartNew(() => _client.PutAsJsonAsync(resource, model));
+            task.Wait();
+            if (task.IsCompleted)
+            {
+                HttpResponseMessage response = task.Result.Result;
+                prepareResult(response);
+            }
+        }
 
         public void ExecuteDelete(string resource)
         {
