@@ -3,7 +3,7 @@ using PluralizationService.English;
 using System;
 using System.Globalization;
 
-namespace EnsembleFX.Pluralization
+namespace EnsembleFX.Core.Pluralization
 {
     public class PluralizationService : IPluralizationService
     {

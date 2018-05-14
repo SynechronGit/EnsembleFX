@@ -1,5 +1,5 @@
-﻿//using EnsembleFX.Filters;
-using EnsembleFX.Filters;
+﻿//using EnsembleFX.Core.Filters;
+using EnsembleFX.Core.Filters;
 using MongoDB.Bson;
 using System;
 using System.Collections.Generic;

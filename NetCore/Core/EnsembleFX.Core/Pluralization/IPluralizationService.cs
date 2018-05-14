@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace EnsembleFX.Pluralization
+namespace EnsembleFX.Core.Pluralization
 {
     public interface IPluralizationService
     {

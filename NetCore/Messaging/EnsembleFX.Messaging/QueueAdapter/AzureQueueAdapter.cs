@@ -1,4 +1,4 @@
-﻿using EnsembleFX.Helper;
+﻿using EnsembleFX.Core.Helpers;
 using EnsembleFX.Logging;
 using EnsembleFX.Messaging.Bus;
 using EnsembleFX.Messaging.Configuration;

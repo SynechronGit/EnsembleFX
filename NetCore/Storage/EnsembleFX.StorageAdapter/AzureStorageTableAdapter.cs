@@ -1,4 +1,4 @@
-﻿using EnsembleFX.Filters;
+﻿using EnsembleFX.Core.Filters;
 using EnsembleFX.StorageAdapter.Model;
 using Microsoft.Extensions.Options;
 using Microsoft.WindowsAzure.Storage;

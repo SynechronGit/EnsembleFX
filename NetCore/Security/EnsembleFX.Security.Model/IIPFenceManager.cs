@@ -1,13 +1,13 @@
-﻿using EnsembleFX.Filters;
+﻿using EnsembleFX.Core.Filters;
 using System;
 using System.Collections.Generic;
 
 namespace EnsembleFX.Core.Security.Model
 {
-	/// <summary>
-	/// Interface for IPFence
-	/// </summary>
-	public interface IIPFenceManager
+    /// <summary>
+    /// Interface for IPFence
+    /// </summary>
+    public interface IIPFenceManager
     {
         void Init(IEnumerable<IPFenceViewModel> records);
         IList<IPFence> Get();

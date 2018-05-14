@@ -1,4 +1,4 @@
-﻿using EnsembleFX.Helper;
+﻿using EnsembleFX.Core.Helpers;
 using EnsembleFX.Logging;
 using EnsembleFX.Logging.Enums;
 using MongoDB.Bson;
@@ -12,7 +12,7 @@ using System.Configuration;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
-using EnsembleFX.Filters;
+using EnsembleFX.Core.Filters;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Options;
 using EnsembleFX.Repository.Model;

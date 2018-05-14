@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Filters\EnsembleFX.Filters\EnsembleFX.Filters.csproj" />
+    <ProjectReference Include="..\..\Core\EnsembleFX.Core\EnsembleFX.Core.csproj" />
   </ItemGroup>
 
 </Project>

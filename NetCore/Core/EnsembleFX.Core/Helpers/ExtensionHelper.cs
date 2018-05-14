@@ -10,7 +10,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace EnsembleFX.Helper
+namespace EnsembleFX.Core.Helpers
 {
     public static class ExtensionHelper
     {
