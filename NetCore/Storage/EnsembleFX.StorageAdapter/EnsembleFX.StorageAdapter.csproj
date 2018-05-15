@@ -5,6 +5,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Blob\**" />
+    <Compile Remove="Table\**" />
+    <EmbeddedResource Remove="Blob\**" />
+    <EmbeddedResource Remove="Table\**" />
+    <None Remove="Blob\**" />
+    <None Remove="Table\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Abstractions\IBlobStorageAdapter.cs" />
+    <Compile Remove="Abstractions\ITableStorageAdapter.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="CompareNETObjects" Version="4.53.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="2.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />

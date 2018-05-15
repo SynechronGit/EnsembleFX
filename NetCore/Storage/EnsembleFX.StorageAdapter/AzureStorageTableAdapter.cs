@@ -1,5 +1,7 @@
 ﻿using EnsembleFX.Core.Filters;
+using EnsembleFX.StorageAdapter.Abstractions;
 using EnsembleFX.StorageAdapter.Model;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
@@ -10,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace EnsembleFX.StorageAdapter
 {
-    public class AzureStorageTableAdapter<T> where T : TableEntity, new()
+    public class AzureStorageTableAdapter<T> : IAzureStorageTableAdapter<T> where T : TableEntity, new()
     {
         #region Internal Members
 
@@ -24,12 +26,21 @@ namespace EnsembleFX.StorageAdapter
         private CloudStorageAccount storageAccount;
         private CloudTableClient tableClient;
         private CloudTable _cloudTable;
+        private readonly IConfiguration _configuration;
         #endregion
 
         #region Constructors
 
         public AzureStorageTableAdapter(IOptions<StorageAdapterAppSettings> appSettings) : this(typeof(T).Name, appSettings)
         {
+        }
+
+        public AzureStorageTableAdapter(IConfiguration configuration, string tableName)
+        {
+            _configuration = configuration;
+            CloudConnection = this.GetConfiguration("TableStorageAccount:ConnectionString");
+            CloudContainer = this.GetConfiguration("TableStorageAccount:CloudContainer");
+            Initialize(tableName);
         }
 
         public AzureStorageTableAdapter(string tableName, IOptions<StorageAdapterAppSettings> appSettings)
@@ -42,7 +53,22 @@ namespace EnsembleFX.StorageAdapter
 
         #endregion
 
-        public void Initialize(string tableName)
+        //public void Initialize(string tableName)
+        //{
+        //    if (!String.IsNullOrEmpty(CloudConnection))
+        //    {
+        //        storageAccount = CloudStorageAccount.Parse(CloudConnection);
+        //        tableClient = storageAccount.CreateCloudTableClient();
+        //        _cloudTable = tableClient.GetTableReference(tableName);
+        //        _cloudTable.CreateIfNotExistsAsync();
+        //    }
+        //    else
+        //    {
+        //        throw new InvalidOperationException("The Cloud Connection string is invalid. Cannot initialize the provider for Azure Cloud operations");
+        //    }
+        //}
+
+        public CloudTable Initialize(string tableName)
         {
             if (!String.IsNullOrEmpty(CloudConnection))
             {
@@ -55,6 +81,13 @@ namespace EnsembleFX.StorageAdapter
             {
                 throw new InvalidOperationException("The Cloud Connection string is invalid. Cannot initialize the provider for Azure Cloud operations");
             }
+
+            return _cloudTable;
+        }
+
+        public string GetConfiguration(string key)
+        {
+            return _configuration[key];
         }
 
         public bool InsertTable<T1>(string tableName, T1 entity)
@@ -137,7 +170,20 @@ namespace EnsembleFX.StorageAdapter
         /// Insert an record
         /// </summary>
         /// <param name="record">The record to insert</param>
-        public async Task InsertAsync(T record)
+        //public async Task InsertAsync(T record)
+        //{
+        //    await Task.Run(() =>
+        //    {
+        //        if (record == null)
+        //        {
+        //            throw new ArgumentNullException(nameof(record));
+        //        }
+        //        var operation = TableOperation.Insert(record);
+        //        _cloudTable.ExecuteAsync(operation).ConfigureAwait(false);
+        //    });
+        //}
+
+        public async Task<bool> InsertAsync(T record)
         {
             await Task.Run(() =>
             {
@@ -148,6 +194,26 @@ namespace EnsembleFX.StorageAdapter
                 var operation = TableOperation.Insert(record);
                 _cloudTable.ExecuteAsync(operation).ConfigureAwait(false);
             });
+
+            return true;
+        }
+
+
+        public async Task<IEnumerable<T>> GetAllAsync()
+        {
+            TableContinuationToken continuationToken = null;
+
+            var query = new TableQuery<T>();
+
+            var allItems = new List<T>();
+            do
+            {
+                var items = await _cloudTable.ExecuteQuerySegmentedAsync(query, continuationToken).ConfigureAwait(false);
+                continuationToken = items.ContinuationToken;
+                allItems.AddRange(items);
+            } while (continuationToken != null);
+
+            return allItems;
         }
 
         /// <summary>
@@ -281,6 +347,21 @@ namespace EnsembleFX.StorageAdapter
         {
             TableContinuationToken continuationToken = new TableContinuationToken();
             return _cloudTable.ExecuteQuerySegmentedAsync(new TableQuery<T>(), continuationToken).Result.LongCount();
+        }
+
+      
+        public async Task<bool> InsertTableAsync(string tableName, T entity)
+        {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+            // Create the TableOperation object that inserts the customer entity.
+            TableOperation insertOperation = TableOperation.Insert((ITableEntity)entity);
+
+            await _cloudTable.ExecuteAsync(insertOperation);
+
+            return true;
         }
 
     }

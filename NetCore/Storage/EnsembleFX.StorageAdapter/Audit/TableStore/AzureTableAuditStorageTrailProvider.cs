@@ -15,8 +15,8 @@ namespace EnsembleFX.StorageAdapter.Audit.TableStore
 		/// <summary>
 		/// TableStorageAdapter constructor injection
 		/// </summary>
-		private ITableStorageAdapter<AzureTableAuditLog> _tableStorageAdapter;
-		public AzureTableAuditStorageTrailProvider(ITableStorageAdapter<AzureTableAuditLog> tableStorageAdapter)
+		private IAzureStorageTableAdapter<AzureTableAuditLog> _tableStorageAdapter;
+		public AzureTableAuditStorageTrailProvider(IAzureStorageTableAdapter<AzureTableAuditLog> tableStorageAdapter)
 		{
 			this._tableStorageAdapter = tableStorageAdapter;
 
