@@ -9,6 +9,5 @@ namespace EnsembleFX.BuildingBlocks
 	/// </summary>
 	public interface IAggregateRoot
 	{
-
 	}
 }
