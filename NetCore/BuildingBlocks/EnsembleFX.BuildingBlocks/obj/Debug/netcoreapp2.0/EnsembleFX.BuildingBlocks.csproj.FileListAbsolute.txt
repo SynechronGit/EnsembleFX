@@ -1,0 +1,16 @@
+D:\pregrine\code\trunk\NetCore\BuildingBlocks\EnsembleFX.BuildingBlocks\obj\Debug\netcoreapp2.0\EnsembleFX.BuildingBlocks.csproj.CoreCompileInputs.cache
+D:\pregrine\code\trunk\NetCore\BuildingBlocks\EnsembleFX.BuildingBlocks\obj\Debug\netcoreapp2.0\EnsembleFX.BuildingBlocks.AssemblyInfoInputs.cache
+D:\pregrine\code\trunk\NetCore\BuildingBlocks\EnsembleFX.BuildingBlocks\obj\Debug\netcoreapp2.0\EnsembleFX.BuildingBlocks.AssemblyInfo.cs
+D:\pregrine\code\trunk\NetCore\BuildingBlocks\EnsembleFX.BuildingBlocks\bin\Debug\netcoreapp2.0\EnsembleFX.BuildingBlocks.deps.json
+D:\pregrine\code\trunk\NetCore\BuildingBlocks\EnsembleFX.BuildingBlocks\bin\Debug\netcoreapp2.0\EnsembleFX.BuildingBlocks.dll
+D:\pregrine\code\trunk\NetCore\BuildingBlocks\EnsembleFX.BuildingBlocks\bin\Debug\netcoreapp2.0\EnsembleFX.BuildingBlocks.pdb
+D:\pregrine\code\trunk\NetCore\BuildingBlocks\EnsembleFX.BuildingBlocks\obj\Debug\netcoreapp2.0\EnsembleFX.BuildingBlocks.dll
+D:\pregrine\code\trunk\NetCore\BuildingBlocks\EnsembleFX.BuildingBlocks\obj\Debug\netcoreapp2.0\EnsembleFX.BuildingBlocks.pdb
+D:\EnsembleFX_CoreFramework\trunk\NetCore\BuildingBlocks\EnsembleFX.BuildingBlocks\bin\Debug\netcoreapp2.0\EnsembleFX.BuildingBlocks.deps.json
+D:\EnsembleFX_CoreFramework\trunk\NetCore\BuildingBlocks\EnsembleFX.BuildingBlocks\bin\Debug\netcoreapp2.0\EnsembleFX.BuildingBlocks.dll
+D:\EnsembleFX_CoreFramework\trunk\NetCore\BuildingBlocks\EnsembleFX.BuildingBlocks\bin\Debug\netcoreapp2.0\EnsembleFX.BuildingBlocks.pdb
+D:\EnsembleFX_CoreFramework\trunk\NetCore\BuildingBlocks\EnsembleFX.BuildingBlocks\obj\Debug\netcoreapp2.0\EnsembleFX.BuildingBlocks.csproj.CoreCompileInputs.cache
+D:\EnsembleFX_CoreFramework\trunk\NetCore\BuildingBlocks\EnsembleFX.BuildingBlocks\obj\Debug\netcoreapp2.0\EnsembleFX.BuildingBlocks.AssemblyInfoInputs.cache
+D:\EnsembleFX_CoreFramework\trunk\NetCore\BuildingBlocks\EnsembleFX.BuildingBlocks\obj\Debug\netcoreapp2.0\EnsembleFX.BuildingBlocks.AssemblyInfo.cs
+D:\EnsembleFX_CoreFramework\trunk\NetCore\BuildingBlocks\EnsembleFX.BuildingBlocks\obj\Debug\netcoreapp2.0\EnsembleFX.BuildingBlocks.dll
+D:\EnsembleFX_CoreFramework\trunk\NetCore\BuildingBlocks\EnsembleFX.BuildingBlocks\obj\Debug\netcoreapp2.0\EnsembleFX.BuildingBlocks.pdb
