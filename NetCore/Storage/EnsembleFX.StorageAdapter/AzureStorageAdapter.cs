@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EnsembleFX.StorageAdapter.Model;
+﻿using EnsembleFX.StorageAdapter.Model;
 using Microsoft.Extensions.Options;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
+using System;
+using System.IO;
 
 namespace EnsembleFX.StorageAdapter
 {

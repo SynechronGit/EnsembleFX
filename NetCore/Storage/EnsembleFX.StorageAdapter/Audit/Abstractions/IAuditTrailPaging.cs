@@ -1,4 +1,4 @@
-﻿namespace EnsembleFX.StorageAdapter.Model.Audit.Abstractions
+﻿namespace EnsembleFX.StorageAdapter.Audit.Abstractions
 {
 	/// <summary>
 	/// Interface declaring start and end range properties to query auditlog
