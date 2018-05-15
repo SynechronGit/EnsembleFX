@@ -1,10 +1,7 @@
 ﻿using EnsembleFX.StorageAdapter.Model;
 using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace EnsembleFX.StorageAdapter
@@ -97,5 +94,34 @@ namespace EnsembleFX.StorageAdapter
             throw new NotImplementedException();
         }
 
+        public string GetConfiguration(string key)
+        {
+            throw new NotImplementedException();
+        }
+
+        bool IStorageAdapter.UploadContent(string key, string fileName, bool deleteAfter)
+        {
+            throw new NotImplementedException();
+        }
+
+        bool IStorageAdapter.UploadContent(string key, Stream contentStream)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<MemoryStream> GetContentAsync(string key)
+        {
+            throw new NotImplementedException();
+        }
+
+        bool IStorageAdapter.DeleteContent(string key)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<string> GetContentTextAsync(string key)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

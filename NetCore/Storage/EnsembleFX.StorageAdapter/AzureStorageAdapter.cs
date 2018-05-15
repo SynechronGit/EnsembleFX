@@ -1,9 +1,12 @@
 ﻿using EnsembleFX.StorageAdapter.Model;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using System;
 using System.IO;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace EnsembleFX.StorageAdapter
 {
@@ -18,11 +21,12 @@ namespace EnsembleFX.StorageAdapter
         #endregion
 
         #region Private Members
-
+        private readonly IConfiguration configuration;
         private CloudStorageAccount storageAccount;
         private CloudBlobClient blobClient;
         private CloudBlobContainer blobContainer;
         private CloudBlockBlob blockBlob;
+        private string sasContainerToken;
         private double sharedAccessTokenExpiryTimeInMinutes;
 
         #endregion
@@ -39,6 +43,15 @@ namespace EnsembleFX.StorageAdapter
             Initialize();
         }
 
+        public AzureStorageAdapter(IConfiguration configuration)
+        {
+            this.configuration = configuration;
+            CloudConnection = this.GetConfiguration("AzureStorageAccount");
+            CloudContainer = this.GetConfiguration("CloudContainer");
+            sharedAccessTokenExpiryTimeInMinutes = string.IsNullOrEmpty(this.GetConfiguration("SharedAccessTokenExpiryTimeInMinutes")) ? 2 : double.Parse(this.GetConfiguration("SharedAccessTokenExpiryTimeInMinutes"));
+            Initialize();
+        }
+
         public AzureStorageAdapter(string cloudConnectionString, string containerName)
         {
             CloudConnection = cloudConnectionString;
@@ -49,6 +62,10 @@ namespace EnsembleFX.StorageAdapter
         #endregion
 
         #region IStorageAdapter implementation
+        public string GetConfiguration(string key)
+        {
+            return configuration[key];
+        }
 
         public void Initialize()
         {
@@ -65,29 +82,79 @@ namespace EnsembleFX.StorageAdapter
             }
         }
 
-        public void UploadContent(string key, string fileName, bool deleteAfter)
+        public async Task<string> GetContentTextAsync(string key)
         {
-            blockBlob = blobContainer.GetBlockBlobReference(key);
-            using (var fs = System.IO.File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.None))
+            string returnText = string.Empty;
+            try
             {
-                blockBlob.UploadFromStreamAsync(fs);
+                MemoryStream blobStream = new MemoryStream();
+                blockBlob = blobContainer.GetBlockBlobReference(key);
+                await blockBlob.DownloadToStreamAsync(blobStream);
+                returnText = Encoding.UTF8.GetString(blobStream.ToArray());
+            }
+            catch (Exception)
+            {
+                //TODO: Logs an error
+                return "";
+            }
+            //return the encoded content of the blob
+            return returnText;
+        }
+
+        public bool UploadContent(string key, string fileName, bool deleteAfter)
+        {
+            //check if the key and filename are not blanks else return false
+            if (string.IsNullOrEmpty(key) || string.IsNullOrEmpty(fileName))
+            {
+                return false;
+            }
+
+            blockBlob = blobContainer.GetBlockBlobReference(key);
+            using (var fs = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.None))
+            {
+                try
+                {
+                    //upload the file as blob 
+                    blockBlob.UploadFromStreamAsync(fs);
+                }
+                catch (Exception)
+                {
+                    //TODO : Logs an exception
+                    return false;
+                }
+
             }
             if (deleteAfter)
             {
+                //delete the file from the source
                 File.Delete(fileName);
             }
+
+            return true;
         }
 
-        public void UploadContent(string key, Stream contentStream)
+        public bool UploadContent(string key, Stream contentStream)
         {
-            if (contentStream == null)
-                return;
+            try
+            {
+                if (contentStream == null)
+                {
+                    return false;
+                }
+                contentStream.Seek(0, SeekOrigin.Begin);
 
-            contentStream.Seek(0, SeekOrigin.Begin);
+                blockBlob = blobContainer.GetBlockBlobReference(key);
+                blockBlob.UploadFromStreamAsync(contentStream).Wait();
+            }
+            catch (Exception ex)
+            {
+                //TODO: logs exceptions
+                return false;
 
-            blockBlob = blobContainer.GetBlockBlobReference(key);
-            blockBlob.UploadFromStreamAsync(contentStream);
+            }
+            return true;
         }
+
 
         public MemoryStream GetContent(string key)
         {
@@ -95,7 +162,7 @@ namespace EnsembleFX.StorageAdapter
             try
             {
                 blockBlob = blobContainer.GetBlockBlobReference(key);
-                blockBlob.DownloadToStreamAsync(blobStream);
+                blockBlob.DownloadToStreamAsync(blobStream).Wait();
             }
             catch (Exception exp)
             {
@@ -104,16 +171,35 @@ namespace EnsembleFX.StorageAdapter
             return blobStream;
         }
 
-        public void DeleteContent(string key)
+        public bool DeleteContent(string key)
         {
             try
             {
                 blockBlob = blobContainer.GetBlockBlobReference(key);
-                blockBlob.DeleteIfExistsAsync();
+                blockBlob.DeleteAsync();
+                return true;
             }
-            catch (Exception exp)
+            catch (Exception)
             {
-                //Logg the error
+                //TODO: Logs an error
+                return false;
+            }
+        }
+
+        public async Task<MemoryStream> GetContentAsync(string key)
+        {
+            MemoryStream blobStream = new MemoryStream();
+            try
+            {
+                //get the blobcontainer reference and download the content of the blob
+                blockBlob = blobContainer.GetBlockBlobReference(key);
+                await blockBlob.DownloadToStreamAsync(blobStream);
+                return blobStream;
+            }
+            catch (Exception ex)
+            {
+                //TODO: Logs an error
+                return new MemoryStream();
             }
         }
 
@@ -136,7 +222,6 @@ namespace EnsembleFX.StorageAdapter
 
         public string GetSASContainerToken()
         {
-
             string sasContainerToken = null;
             try
             {
@@ -161,11 +246,7 @@ namespace EnsembleFX.StorageAdapter
             }
             //Return the URI string for the container, including the SAS token.
             return sasContainerToken;
-
         }
-
-
         #endregion
-
     }
 }
