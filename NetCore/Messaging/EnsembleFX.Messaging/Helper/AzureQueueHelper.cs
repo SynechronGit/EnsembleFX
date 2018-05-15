@@ -23,6 +23,7 @@ namespace EnsembleFX.Core.Helpers
     public class AzureQueueHelper
     {
 
+
         #region Internal Members
         IQueueClient queueClient;
         #endregion
