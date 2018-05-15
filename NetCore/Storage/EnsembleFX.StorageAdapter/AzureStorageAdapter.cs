@@ -74,7 +74,7 @@ namespace EnsembleFX.StorageAdapter
                 storageAccount = CloudStorageAccount.Parse(CloudConnection);
                 blobClient = storageAccount.CreateCloudBlobClient();
                 blobContainer = blobClient.GetContainerReference(CloudContainer);
-                blobContainer.CreateIfNotExistsAsync();
+                blobContainer.CreateIfNotExistsAsync().Wait();
             }
             else
             {
@@ -115,7 +115,7 @@ namespace EnsembleFX.StorageAdapter
                 try
                 {
                     //upload the file as blob 
-                    blockBlob.UploadFromStreamAsync(fs);
+                    blockBlob.UploadFromStreamAsync(fs).Wait();
                 }
                 catch (Exception)
                 {
@@ -176,7 +176,7 @@ namespace EnsembleFX.StorageAdapter
             try
             {
                 blockBlob = blobContainer.GetBlockBlobReference(key);
-                blockBlob.DeleteAsync();
+                blockBlob.DeleteAsync().Wait();
                 return true;
             }
             catch (Exception)
@@ -210,7 +210,7 @@ namespace EnsembleFX.StorageAdapter
             {
                 MemoryStream blobStream = new MemoryStream();
                 blockBlob = blobContainer.GetBlockBlobReference(key);
-                blockBlob.DownloadToStreamAsync(blobStream);
+                blockBlob.DownloadToStreamAsync(blobStream).Wait();
                 returnText = System.Text.Encoding.UTF8.GetString(blobStream.ToArray());
             }
             catch (Exception exp)
@@ -222,7 +222,7 @@ namespace EnsembleFX.StorageAdapter
 
         public string GetSASContainerToken()
         {
-            string sasContainerToken = null;
+            //string sasContainerToken = null;
             try
             {
                 CloudStorageAccount storageAccount = CloudStorageAccount.Parse(CloudConnection);
