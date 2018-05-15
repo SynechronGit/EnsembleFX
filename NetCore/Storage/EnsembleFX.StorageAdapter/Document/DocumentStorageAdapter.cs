@@ -1,4 +1,5 @@
-﻿using EnsembleFX.StorageAdapter.Abstractions;
+﻿using EnsembleFX.Exceptions.Storage;
+using EnsembleFX.StorageAdapter.Abstractions;
 using MongoDB.Driver;
 using ODataQueryHelper.Core;
 using ODataQueryRunner.MongoDB;

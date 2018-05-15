@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Core\EnsembleFX.Core\EnsembleFX.Core.csproj" />
+    <ProjectReference Include="..\..\Exception\EnsembleFX.Exceptions\EnsembleFX.Exceptions.csproj" />
     <ProjectReference Include="..\EnsembleFX.StorageAdapter.Model\EnsembleFX.StorageAdapter.Model.csproj" />
   </ItemGroup>
 
