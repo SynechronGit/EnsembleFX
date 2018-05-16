@@ -15,10 +15,10 @@ namespace EnsembleFX.StorageAdapter.Audit.TableStore
 		/// <summary>
 		/// TableStorageAdapter constructor injection
 		/// </summary>
-		private IAzureStorageTableAdapter<AzureTableAuditLog> _tableStorageAdapter;
-		public AzureTableAuditStorageTrailProvider(IAzureStorageTableAdapter<AzureTableAuditLog> tableStorageAdapter)
+		private IAzureStorageTableAdapter<AzureTableAuditLog> _azureStorageTableAdapter;
+		public AzureTableAuditStorageTrailProvider(IAzureStorageTableAdapter<AzureTableAuditLog> azureStorageTableAdapter)
 		{
-			this._tableStorageAdapter = tableStorageAdapter;
+			this._azureStorageTableAdapter = azureStorageTableAdapter;
 
 		}
 		#endregion
@@ -33,7 +33,7 @@ namespace EnsembleFX.StorageAdapter.Audit.TableStore
 		{
 			if (auditTrailLog != null)
 			{
-				await _tableStorageAdapter.InsertAsync((AzureTableAuditLog)auditTrailLog);
+				await _azureStorageTableAdapter.InsertAsync((AzureTableAuditLog)auditTrailLog);
 				return true;
 			}
 			return false;
@@ -48,7 +48,7 @@ namespace EnsembleFX.StorageAdapter.Audit.TableStore
 		{
 			if (auditTrailPaging != null)
 			{				
-				var result = await _tableStorageAdapter.GetAllAsync();
+				var result = await _azureStorageTableAdapter.GetAllAsync();
 				/*
 				return await _dsStorageAdapter.QueryAudit(auditTrailPaging.Start, auditTrailPaging.End);
 				*/
