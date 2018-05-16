@@ -43,14 +43,14 @@ namespace EnsembleFX.StorageAdapter
             Initialize();
         }
 
-        public AzureStorageAdapter(IConfiguration configuration)
-        {
-            this.configuration = configuration;
-            CloudConnection = this.GetConfiguration("AzureStorageAccount");
-            CloudContainer = this.GetConfiguration("CloudContainer");
-            sharedAccessTokenExpiryTimeInMinutes = string.IsNullOrEmpty(this.GetConfiguration("SharedAccessTokenExpiryTimeInMinutes")) ? 2 : double.Parse(this.GetConfiguration("SharedAccessTokenExpiryTimeInMinutes"));
-            Initialize();
-        }
+        //public AzureStorageAdapter(IConfiguration configuration)
+        //{
+        //    this.configuration = configuration;
+        //    CloudConnection = this.GetConfiguration("AzureStorageAccount");
+        //    CloudContainer = this.GetConfiguration("CloudContainer");
+        //    sharedAccessTokenExpiryTimeInMinutes = string.IsNullOrEmpty(this.GetConfiguration("SharedAccessTokenExpiryTimeInMinutes")) ? 2 : double.Parse(this.GetConfiguration("SharedAccessTokenExpiryTimeInMinutes"));
+        //    Initialize();
+        //}
 
         public AzureStorageAdapter(string cloudConnectionString, string containerName)
         {
