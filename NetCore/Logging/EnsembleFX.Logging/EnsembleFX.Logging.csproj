@@ -15,6 +15,11 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Synechron Technologies</Authors>
+    <Company>Synechron Technologies</Company>
+    <Product>EnsembleFX Framework</Product>
+    <Copyright>Synechron Technologies</Copyright>
   </PropertyGroup>
 
 </Project>

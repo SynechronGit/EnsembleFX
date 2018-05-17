@@ -2,7 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Synechron Technologies</Authors>
+    <Company>Synechron Technologies</Company>
+    <Product>EnsembleFX Framework</Product>
+    <Copyright>Synechron Technologies</Copyright>
   </PropertyGroup>
+  
   <ItemGroup>
     <PackageReference Include="System.Collections.NonGeneric" Version="4.3.0" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.4.1" />
