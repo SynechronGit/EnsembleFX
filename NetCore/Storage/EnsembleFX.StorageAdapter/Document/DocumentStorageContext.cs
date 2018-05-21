@@ -1,5 +1,6 @@
 ﻿using EnsembleFX.StorageAdapter.Abstractions;
 using Microsoft.Extensions.Configuration;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Driver;
 using System;
@@ -47,6 +48,7 @@ namespace EnsembleFX.StorageAdapter.Document
         public IMongoDatabase GetDatabase()
         {
             MongoClientSettings clientSettings = new MongoClientSettings();
+            BsonDefaults.GuidRepresentation = GuidRepresentation.PythonLegacy;
             // Add logic to register configurator to log queries for troubleshooting.
             MongoClient client = new MongoClient(connectionString);
             var conventionPack = new ConventionPack();
