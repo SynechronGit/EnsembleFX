@@ -1,11 +1,8 @@
-﻿//using EnsembleFX.Core.Filters;
-using EnsembleFX.Core.Filters;
+﻿using EnsembleFX.Core.Filters;
 using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace EnsembleFX.Repository
@@ -33,13 +30,13 @@ namespace EnsembleFX.Repository
         /// </summary>
         /// <param name="entity">Entity to insert</param>
         /// <returns>True if the insert has been successful otherwise false</returns>
-        bool InsertAsync(TEntity entity);
+        Task<bool> InsertAsync(TEntity entity);
         /// <summary>
         /// Inserts multiple entities into respository asynchronously
         /// </summary>
         /// <param name="entity">List of Entity to insert</param>
         /// <returns>True if the insert has been successful otherwise false</returns>
-        bool InsertAsync(IEnumerable<TEntity> entity);
+        Task<bool> InsertAsync(IEnumerable<TEntity> entity);
         /// <summary>
         /// Saves (updates) an entity that is already in the repository
         /// </summary>
@@ -52,12 +49,28 @@ namespace EnsembleFX.Repository
         /// <param name="entity"></param>
         /// <returns></returns>
         bool UpdateBsonDocument(TEntity entity);
+
+        /// <summary>
+        /// Saves (updates) an entity that is already in the repository
+        /// </summary>
+        /// <param name="entity">Entity to update</param>
+        /// <returns>True if the update was successful otherwise false</returns>
+        Task<bool> UpdateAsync(TEntity entity);
+
         /// <summary>
         /// Removes an entity from the repository
         /// </summary>
         /// <param name="entity">Entity to remove</param>
         /// <returns>True if an entity was deleted otherwise false</returns>
         bool Delete(TEntity entity);
+
+        /// <summary>
+        /// Removes an entity from the repository
+        /// </summary>
+        /// <param name="entity">Entity to remove</param>
+        /// <returns>True if an entity was deleted otherwise false</returns>
+        Task<bool> DeleteAsync(TEntity entity);
+
         /// <summary>
         /// 
         /// </summary>
@@ -122,6 +135,12 @@ namespace EnsembleFX.Repository
         IList<TEntity> GetAll();
 
         /// <summary>
+        /// Retrieves all the entities from the repository
+        /// </summary>
+        /// <returns>List of entities</returns>
+        Task<IList<TEntity>> GetAllAsync();
+
+        /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
@@ -134,6 +153,12 @@ namespace EnsembleFX.Repository
         /// <returns>A matching entity with the specified id</returns>
         TEntity GetById(string id);
 
+        /// <summary>
+        /// Retrieves an entity by its integer id
+        /// </summary>
+        /// <param name="id">Id of the entity to retrieve</param>
+        /// <returns>A matching entity with the specified id</returns>
+        Task<TEntity> GetByIdAsync(string id);
 
         /// <summary>
         /// Distinct search on any single column given in parameter Match

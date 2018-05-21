@@ -16,6 +16,8 @@ using EnsembleFX.Core.Filters;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Options;
 using EnsembleFX.Repository.Model;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace EnsembleFX.Repository
 {
@@ -26,19 +28,20 @@ namespace EnsembleFX.Repository
     /// <typeparam name="T">Entity type for this repository</typeparam>
     public class MongoDbRepository<TEntity> : IDBRepository<TEntity> where TEntity : class
     {
+        #region Private Fields
         private IMongoDatabase database;
         private IMongoCollection<TEntity> collection;
         private IMongoCollection<BsonDocument> bsonCollection;
-        private string _collection;
+        private string collectionName;
         private string connectionString;
         private string databaseName;
+        private readonly LogManager logManager;
+        #endregion
 
-        LogManager logManager;
-
-        public MongoDbRepository(string collection, ILogController logController, IOptions<ConnectionStrings> connectionStrings)
+        public MongoDbRepository(string collectionName, ILogController logController, IOptions<ConnectionStrings> connectionStrings)
         {
             logManager = new LogManager(logController);
-            _collection = collection;
+            this.collectionName = collectionName;
             this.connectionString = connectionStrings.Value.ConnectionString;
             this.databaseName = connectionStrings.Value.DatabaseName;
             GetDatabase();
@@ -60,11 +63,43 @@ namespace EnsembleFX.Repository
             }
         }
 
-        public bool InsertAsync(IEnumerable<TEntity> entity)
+        public async Task<bool> InsertAsync(IEnumerable<TEntity> entity)
         {
             try
             {
-                collection.InsertManyAsync(entity);
+                await collection.InsertManyAsync(entity);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                logManager.LogMessage("Message: " + ex.Message + Environment.NewLine + "StackTrace: " + ex.StackTrace + Environment.NewLine + "InnerException: " + ex.InnerException, "", "", LogLevel.Error);
+                return false;
+            }
+        }
+
+        public bool InsertBsonDocument(TEntity entity)
+        {
+            try
+            {
+                string strEntity = ReadRequestAsString(entity);
+                BsonDocument entityDocument = BsonSerializer.Deserialize<BsonDocument>(strEntity);
+
+                bsonCollection.InsertOneAsync(entityDocument);
+                return true;
+
+            }
+            catch (Exception ex)
+            {
+                logManager.LogMessage("Message: " + ex.Message + Environment.NewLine + "StackTrace: " + ex.StackTrace + Environment.NewLine + "InnerException: " + ex.InnerException, "", "", LogLevel.Error);
+                return false;
+            }
+        }
+
+        public async Task<bool> InsertAsync(TEntity entity)
+        {
+            try
+            {
+                await collection.InsertOneAsync(entity);
                 return true;
             }
             catch (Exception ex)
@@ -96,14 +131,85 @@ namespace EnsembleFX.Repository
             }
         }
 
+        public async Task<bool> UpdateAsync(TEntity entity)
+        {
+            try
+            {
+                List<BsonElement> lstElement = entity.ToBsonDocument().Elements.ToList();
+                string id = Convert.ToString(lstElement.Where(x => x.Name == "_id").FirstOrDefault().Value);
+                FilterDefinition<TEntity> filter = Builders<TEntity>.Filter.Eq("_id", id);
+
+                ReplaceOneResult objResult = await collection.ReplaceOneAsync(
+                                               filter,
+                                               entity,
+                                               new UpdateOptions { IsUpsert = false }
+                                       );
+                return objResult.ModifiedCount > 0 ? true : false;
+            }
+            catch (Exception ex)
+            {
+                logManager.LogMessage("Message: " + ex.Message + Environment.NewLine + "StackTrace: " + ex.StackTrace + Environment.NewLine + "InnerException: " + ex.InnerException, "", "", LogLevel.Error);
+                return false;
+            }
+        }
+
+        public bool UpdateBsonDocument(TEntity entity)
+        {
+            try
+            {
+                string strEntity = ReadRequestAsString(entity);
+                BsonDocument entityDocument = BsonSerializer.Deserialize<BsonDocument>(strEntity);
+                List<BsonElement> lstElement = entityDocument.ToBsonDocument().Elements.ToList();
+                var id = (lstElement.Where(x => x.Name == "_id").FirstOrDefault().Value);
+                FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("_id", id);
+
+
+                ReplaceOneResult objResult = bsonCollection.ReplaceOne(
+                                               filter,
+                                               entityDocument,
+                                               new UpdateOptions { IsUpsert = false }
+                                       );
+                return objResult.ModifiedCount > 0 ? true : false;
+            }
+            catch (Exception ex)
+            {
+                logManager.LogMessage("Message: " + ex.Message + Environment.NewLine + "StackTrace: " + ex.StackTrace + Environment.NewLine + "InnerException: " + ex.InnerException, "", "", LogLevel.Error);
+                return false;
+            }
+        }
+
         public bool Delete(TEntity entity)
         {
+            try
+            {
+                List<BsonElement> lstElement = entity.ToBsonDocument().Elements.ToList();
+                string id = Convert.ToString(lstElement.Where(x => x.Name == "_id").FirstOrDefault().Value);
+                FilterDefinition<TEntity> filter = Builders<TEntity>.Filter.Eq("_id", id);
+                DeleteResult objResult = collection.DeleteOne(filter);
+                return objResult.DeletedCount > 0 ? true : false;
+            }
+            catch (Exception ex)
+            {
+                logManager.LogMessage("Message: " + ex.Message + Environment.NewLine + "StackTrace: " + ex.StackTrace + Environment.NewLine + "InnerException: " + ex.InnerException, "", "", LogLevel.Error);
+                return false;
+            }
+        }
 
-            return false;
-            // TODO : pending. 
-            //return collection
-            //    .Remove(Query.EQ("_id", entity.Id))
-            //        .DocumentsAffected > 0;
+        public async Task<bool> DeleteAsync(TEntity entity)
+        {
+            try
+            {
+                List<BsonElement> lstElement = entity.ToBsonDocument().Elements.ToList();
+                string id = Convert.ToString(lstElement.Where(x => x.Name == "_id").FirstOrDefault().Value);
+                FilterDefinition<TEntity> filter = Builders<TEntity>.Filter.Eq("_id", id);
+                DeleteResult objResult = await collection.DeleteOneAsync(filter);
+                return objResult.DeletedCount > 0 ? true : false;
+            }
+            catch (Exception ex)
+            {
+                logManager.LogMessage("Message: " + ex.Message + Environment.NewLine + "StackTrace: " + ex.StackTrace + Environment.NewLine + "InnerException: " + ex.InnerException, "", "", LogLevel.Error);
+                return false;
+            }
         }
 
         public bool DeleteBy(string key, int value)
@@ -113,6 +219,49 @@ namespace EnsembleFX.Repository
                 FilterDefinition<TEntity> filter = Builders<TEntity>.Filter.Eq(key, value);
                 DeleteResult objResult = collection.DeleteMany(filter);
                 return objResult.DeletedCount > 0 ? true : false;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public bool DeleteById(string id)
+        {
+            try
+            {
+                //FilterDefinition<TEntity> filter = Builders<TEntity>.Filter.Eq("_id", id);
+                //DeleteResult objResult = collection.DeleteMany(filter);
+                //return objResult.DeletedCount > 0 ? true : false;
+
+                FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("_id", id);
+                DeleteResult objResult = bsonCollection.DeleteMany(filter);
+                return objResult.DeletedCount > 0 ? true : false;
+            }
+            catch (Exception ex)
+            {
+                logManager.LogMessage("Message: " + ex.Message + Environment.NewLine + "StackTrace: " + ex.StackTrace + Environment.NewLine + "InnerException: " + ex.InnerException, "", "", LogLevel.Error);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Delete multiple objects by key/reference
+        /// </summary>
+        /// <param name="key">key field</param>
+        /// <param name="value">key value</param>
+        /// <returns>result flag</returns>
+        public bool DeleteBy(string key, string value)
+        {
+            try
+            {
+                //FilterDefinition<TEntity> filter = Builders<TEntity>.Filter.Eq(key, value);
+                //DeleteResult objResult = collection.DeleteMany(filter);
+                //return objResult.DeletedCount > 0 ? true : false;
+
+                FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq(key, value);
+                DeleteResult objResult = bsonCollection.DeleteMany(filter);
+                return true;
             }
             catch (Exception)
             {
@@ -343,14 +492,27 @@ namespace EnsembleFX.Repository
                 totalCount = 0;
                 return new List<TEntity>();
             }
-        }
-
+        }        
 
         public IList<TEntity> GetAll()
         {
             try
             {
                 return collection.Find(Builders<TEntity>.Filter.Empty).ToList();
+            }
+            catch (Exception ex)
+            {
+                logManager.LogMessage("Message: " + ex.Message + Environment.NewLine + "StackTrace: " + ex.StackTrace + Environment.NewLine + "InnerException: " + ex.InnerException, "", "", LogLevel.Error);
+                return new List<TEntity>();
+            }
+        }
+
+        public async Task<IList<TEntity>> GetAllAsync()
+        {
+            try
+            {
+                var results = await collection.FindAsync(Builders<TEntity>.Filter.Empty);
+                return results.ToList();
             }
             catch (Exception ex)
             {
@@ -375,49 +537,21 @@ namespace EnsembleFX.Repository
             }
         }
 
-        public bool DeleteById(string id)
+        public async Task<TEntity> GetByIdAsync(string id)
         {
             try
             {
-                //FilterDefinition<TEntity> filter = Builders<TEntity>.Filter.Eq("_id", id);
-                //DeleteResult objResult = collection.DeleteMany(filter);
-                //return objResult.DeletedCount > 0 ? true : false;
-
                 FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("_id", id);
-                DeleteResult objResult = bsonCollection.DeleteMany(filter);
-                return objResult.DeletedCount > 0 ? true : false;
+                var result = await bsonCollection.FindAsync(filter);
+                BsonDocument bsonDocument = result.FirstOrDefault();
+                return bsonDocument != null ? BsonSerializer.Deserialize<TEntity>(bsonDocument) : null;
             }
             catch (Exception ex)
             {
                 logManager.LogMessage("Message: " + ex.Message + Environment.NewLine + "StackTrace: " + ex.StackTrace + Environment.NewLine + "InnerException: " + ex.InnerException, "", "", LogLevel.Error);
-                return false;
+                return null;
             }
         }
-
-        /// <summary>
-        /// Delete multiple objects by key/reference
-        /// </summary>
-        /// <param name="key">key field</param>
-        /// <param name="value">key value</param>
-        /// <returns>result flag</returns>
-        public bool DeleteBy(string key, string value)
-        {
-            try
-            {
-                //FilterDefinition<TEntity> filter = Builders<TEntity>.Filter.Eq(key, value);
-                //DeleteResult objResult = collection.DeleteMany(filter);
-                //return objResult.DeletedCount > 0 ? true : false;
-
-                FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq(key, value);
-                DeleteResult objResult = bsonCollection.DeleteMany(filter);
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
 
         /// <summary>
         /// Distinct search on any single column given in parameter Match
@@ -480,66 +614,6 @@ namespace EnsembleFX.Repository
             }
         }
 
-
-
-        public bool InsertAsync(TEntity entity)
-        {
-            try
-            {
-                collection.InsertOneAsync(entity);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                logManager.LogMessage("Message: " + ex.Message + Environment.NewLine + "StackTrace: " + ex.StackTrace + Environment.NewLine + "InnerException: " + ex.InnerException, "", "", LogLevel.Error);
-                return false;
-            }
-        }
-
-        public bool InsertBsonDocument(TEntity entity)
-        {
-            try
-            {
-                string strEntity = ReadRequestAsString(entity);
-                BsonDocument entityDocument = BsonSerializer.Deserialize<BsonDocument>(strEntity);
-
-                bsonCollection.InsertOneAsync(entityDocument);
-                return true;
-
-            }
-            catch (Exception ex)
-            {
-                logManager.LogMessage("Message: " + ex.Message + Environment.NewLine + "StackTrace: " + ex.StackTrace + Environment.NewLine + "InnerException: " + ex.InnerException, "", "", LogLevel.Error);
-                return false;
-            }
-        }
-
-
-        public bool UpdateBsonDocument(TEntity entity)
-        {
-            try
-            {
-                string strEntity = ReadRequestAsString(entity);
-                BsonDocument entityDocument = BsonSerializer.Deserialize<BsonDocument>(strEntity);
-                List<BsonElement> lstElement = entityDocument.ToBsonDocument().Elements.ToList();
-                var id = (lstElement.Where(x => x.Name == "_id").FirstOrDefault().Value);
-                FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("_id", id);
-
-
-                ReplaceOneResult objResult = bsonCollection.ReplaceOne(
-                                               filter,
-                                               entityDocument,
-                                               new UpdateOptions { IsUpsert = false }
-                                       );
-                return objResult.ModifiedCount > 0 ? true : false;
-            }
-            catch (Exception ex)
-            {
-                logManager.LogMessage("Message: " + ex.Message + Environment.NewLine + "StackTrace: " + ex.StackTrace + Environment.NewLine + "InnerException: " + ex.InnerException, "", "", LogLevel.Error);
-                return false;
-            }
-        }
-
         public TEntity SearchForSingle(Expression<Func<TEntity, bool>> predicate)
         {
             try
@@ -555,43 +629,6 @@ namespace EnsembleFX.Repository
                 return null;
             }
 
-        }
-        #region Private Helper Methods
-        private void GetDatabase()
-        {
-            try
-            {
-                MongoClient client = null;
-                logManager.LogMessage("ConnectionString", "", "", LogLevel.Info);
-                MongoClientSettings clientSettings = new MongoClientSettings();
-                client = new MongoClient(GetConnectionString());
-                logManager.LogMessage("GetClient()", "", "", LogLevel.Info);
-                database = client.GetDatabase(this.databaseName);
-                logManager.LogMessage("GetDatabase() Completed", "", "", LogLevel.Info);
-
-            }
-            catch (Exception ex)
-            {
-                logManager.LogMessage("Message: " + ex.Message + Environment.NewLine + "StackTrace: " + ex.StackTrace + Environment.NewLine + "InnerException: " + ex.InnerException, "", "", LogLevel.Error);
-            }
-        }
-
-        private string GetConnectionString()
-        {
-            return this.connectionString.Replace("{DB_NAME}", this.databaseName);
-        }
-
-        private void GetCollection()
-        {
-            try
-            {
-                collection = database.GetCollection<TEntity>(_collection);
-                bsonCollection = database.GetCollection<BsonDocument>(_collection);
-            }
-            catch (Exception ex)
-            {
-                logManager.LogMessage("Message: " + ex.Message + Environment.NewLine + "StackTrace: " + ex.StackTrace + Environment.NewLine + "InnerException: " + ex.InnerException, "", "", LogLevel.Error);
-            }
         }
 
         public long GetCount()
@@ -620,29 +657,68 @@ namespace EnsembleFX.Repository
             return 0;
         }
 
+
+        #region Private Methods
+        private void GetDatabase()
+        {
+            try
+            {
+                MongoClient client = null;
+                logManager.LogMessage("ConnectionString", "", "", LogLevel.Info);
+                MongoClientSettings clientSettings = new MongoClientSettings();
+                client = new MongoClient(GetConnectionString());
+                logManager.LogMessage("GetClient()", "", "", LogLevel.Info);
+                database = client.GetDatabase(this.databaseName);
+                logManager.LogMessage("GetDatabase() Completed", "", "", LogLevel.Info);
+
+            }
+            catch (Exception ex)
+            {
+                logManager.LogMessage("Message: " + ex.Message + Environment.NewLine + "StackTrace: " + ex.StackTrace + Environment.NewLine + "InnerException: " + ex.InnerException, "", "", LogLevel.Error);
+            }
+        }
+
+        private string GetConnectionString()
+        {
+            return this.connectionString.Replace("{DB_NAME}", this.databaseName);
+        }
+
+        private void GetCollection()
+        {
+            try
+            {
+                collection = database.GetCollection<TEntity>(collectionName);
+                bsonCollection = database.GetCollection<BsonDocument>(collectionName);
+            }
+            catch (Exception ex)
+            {
+                logManager.LogMessage("Message: " + ex.Message + Environment.NewLine + "StackTrace: " + ex.StackTrace + Environment.NewLine + "InnerException: " + ex.InnerException, "", "", LogLevel.Error);
+            }
+        }
+
         private string ReadRequestAsString(object entity)
         {
             return JsonConvert.SerializeObject(entity);
         }
 
-        private List<TEntity> ConvertDocumentToList<TEntity>(IEnumerable<BsonDocument> documents)
-        {
-            try
-            {
-                List<TEntity> entities = new List<TEntity>();
+        //private List<TEntity> ConvertDocumentToList<TEntity>(IEnumerable<BsonDocument> documents)
+        //{
+        //    try
+        //    {
+        //        List<TEntity> entities = new List<TEntity>();
 
-                foreach (var document in documents)
-                {
-                    TEntity data = BsonSerializer.Deserialize<TEntity>(document);
-                    entities.Add(data);
-                }
-                return entities;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
+        //        foreach (var document in documents)
+        //        {
+        //            TEntity data = BsonSerializer.Deserialize<TEntity>(document);
+        //            entities.Add(data);
+        //        }
+        //        return entities;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
         #endregion
     }
 }
