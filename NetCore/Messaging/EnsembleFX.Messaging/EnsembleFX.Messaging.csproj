@@ -7,6 +7,7 @@
     <Company>Synechron Technologies</Company>
     <Product>EnsembleFX Framework</Product>
     <Copyright>Synechron Technologies</Copyright>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
