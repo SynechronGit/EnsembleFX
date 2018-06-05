@@ -1,5 +1,6 @@
 ﻿using EnsembleFX.Logging;
 using EnsembleFX.Messaging.Logging;
+using EnsembleFX.Messaging.Model;
 using EnsembleFX.Messaging.QueueAdapter;
 using EnsembleFX.Messaging.Serialization;
 using EnsembleFX.Messaging.Service;
@@ -17,6 +18,7 @@ namespace EnsembleFX.Messaging.Publisher
     public class Publisher<T> : MessageBusBuilder where T : IMessage
     {
         private ILogController logController;
+     
 
         #region Private Properties
         IQueueAdapter _queueManager;
@@ -35,7 +37,7 @@ namespace EnsembleFX.Messaging.Publisher
         #endregion
 
         #region Constructor
-        public Publisher(ILogController logController, IOptions<ConnectionStrings> connectionStrings) : base(logController, connectionStrings)
+        public Publisher(ILogController logController, IOptions<ConnectionStrings> connectionStrings, IOptions<AzureServiceBusConfiguration> serviceBusConfiguration) : base(logController, connectionStrings, serviceBusConfiguration)
         {
             _queueManager = this.BuildDefaultQueueAdapter();
             logger = this.BuildLogger();
@@ -48,7 +50,7 @@ namespace EnsembleFX.Messaging.Publisher
         /// </summary>
         /// <param name="queueManager">The queue manager.</param>
         /// <param name="logger">The logger.</param>
-        public Publisher(IQueueAdapter queueManager, IBusLogger logger, ILogController logController, IOptions<ConnectionStrings> connectionStrings) : base(logController, connectionStrings)
+        public Publisher(IQueueAdapter queueManager, IBusLogger logger, ILogController logController, IOptions<ConnectionStrings> connectionStrings, IOptions<AzureServiceBusConfiguration> serviceBusConfiguration) : base(logController, connectionStrings, serviceBusConfiguration)
         {
             this.logger = logger;
             this._queueManager = queueManager;

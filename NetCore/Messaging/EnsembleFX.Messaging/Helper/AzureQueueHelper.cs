@@ -4,6 +4,10 @@ using EnsembleFX.Messaging.Model;
 using EnsembleFX.Messaging.Model.Enums;
 using EnsembleFX.Repository;
 using EnsembleFX.Repository.Model;
+using Microsoft.Azure.Management.Fluent;
+using Microsoft.Azure.Management.ResourceManager.Fluent;
+using Microsoft.Azure.Management.ResourceManager.Fluent.Core;
+using Microsoft.Azure.Management.ServiceBus.Fluent;
 //using EnsembleFX.Shared;
 //using Microsoft.Azure;
 using Microsoft.Azure.ServiceBus;
@@ -13,6 +17,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
@@ -52,6 +57,7 @@ namespace EnsembleFX.Core.Helpers
         IDBRepository<Workflow> _workflowDbRepository;
         IDBRepository<AgentConfiguration> _agentConfigurationDBRepository;
         ILogManager _LogManager { get; set; }
+        IOptions<AzureServiceBusConfiguration> _serviceBusConfiguration;
 
         #endregion
 
@@ -72,7 +78,7 @@ namespace EnsembleFX.Core.Helpers
         //    _agentConfigurationDBRepository = new DBManager<AgentConfiguration>(agentConfigurationcollectionName, logController).Instance;
         //    _LogManager = new LogManager(logController);
         //}
-        public AzureQueueHelper(ILogController logController, IOptions<ConnectionStrings> connectionStrings)
+        public AzureQueueHelper(ILogController logController, IOptions<ConnectionStrings> connectionStrings, IOptions<AzureServiceBusConfiguration> serviceBusConfiguration)
         {
             //this.httpContextAccessor = httpContextAccessor;
 
@@ -84,6 +90,7 @@ namespace EnsembleFX.Core.Helpers
             _workflowDbRepository = new DBManager<Workflow>(workflowCollectionName, logController, connectionStrings).Instance;
             _agentConfigurationDBRepository = new DBManager<AgentConfiguration>(agentConfigurationcollectionName, logController, connectionStrings).Instance;
             _LogManager = new LogManager(logController);
+            _serviceBusConfiguration = serviceBusConfiguration;
         }
 
         #endregion
@@ -136,17 +143,18 @@ namespace EnsembleFX.Core.Helpers
         /// <summary>
         /// Send Message to Azure Queue
         /// </summary>
-        /// <param name="serviceBusConnectionString">Service Bus Connection string</param>
+        /// <param name="serviceBusName">Service Bus Connection string</param>
         /// <param name="queue">queue name</param>
         /// <param name="message">Brokered Message</param>
-        public async void SendMessage(string serviceBusConnectionString, string queue, Message message)
+        public async void SendMessage(string serviceBusName, string queue, Message message)
         {
             try
             {
-                QueueClient client = new QueueClient(serviceBusConnectionString, queue, ReceiveMode.PeekLock);
-                client.SendAsync(message);
-                await client.CloseAsync()
-;
+                IAuthorizationKeys keys = GetAuthroziationKeys(serviceBusName);
+
+                QueueClient client = new QueueClient(serviceBusName, queue, ReceiveMode.PeekLock);
+                client.SendAsync(message).Wait();
+                await client.CloseAsync();
             }
             catch (Exception)
             {
@@ -158,17 +166,19 @@ namespace EnsembleFX.Core.Helpers
         /// <summary>
         /// Send Message to Azure Queue
         /// </summary>
-        /// <param name="serviceBusConnectionString">Service Bus Connection string</param>
+        /// <param name="serviceBusName">Service Bus Connection string</param>
         /// <param name="queue">queue name</param>
         /// <param name="message">Brokered Message</param>
-        public async void SendMessage<T>(string serviceBusConnectionString, string queue, T messageObject)
+        public async void SendMessage<T>(string serviceBusName, string queue, T messageObject)
         {
             try
             {
+                IAuthorizationKeys keys = GetAuthroziationKeys(serviceBusName);
+
                 string objectJson = this.SerializeObjectToJson<T>(messageObject);
                 byte[] objectBytes = Encoding.UTF8.GetBytes(objectJson);
                 Message queueMessage = new Message(objectBytes);
-                QueueClient client = new QueueClient(serviceBusConnectionString, queue, ReceiveMode.PeekLock);
+                QueueClient client = new QueueClient(keys.PrimaryConnectionString, queue);
                 client.SendAsync(queueMessage).Wait();//As per observation if we don't wait, No message added to queue. Try and check after removing Wait() call.
                 await client.CloseAsync();
             }
@@ -176,6 +186,23 @@ namespace EnsembleFX.Core.Helpers
             {
                 throw;
             }
+        }
+
+        private IAuthorizationKeys GetAuthroziationKeys(string serviceBusName)
+        {
+            var credentials = SdkContext.AzureCredentialsFactory.FromServicePrincipal(this._serviceBusConfiguration.Value.ClientId, this._serviceBusConfiguration.Value.ClientSecrete, this._serviceBusConfiguration.Value.TenantId, AzureEnvironment.AzureGlobalCloud);
+            var azure = Azure
+                .Configure()
+                .WithLogLevel(HttpLoggingDelegatingHandler.Level.Basic)
+                .Authenticate(credentials)
+                .WithDefaultSubscription();
+
+            var serviceBus = azure.ServiceBusNamespaces.GetByResourceGroup(this._serviceBusConfiguration.Value.ResourceGroupName, serviceBusName);
+
+            var namespaceAuthorizationRules = serviceBus.AuthorizationRules.List();
+
+            var keys = namespaceAuthorizationRules.FirstOrDefault().GetKeys();
+            return keys;
         }
 
         /// <summary>

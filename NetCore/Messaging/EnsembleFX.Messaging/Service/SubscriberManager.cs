@@ -1,5 +1,6 @@
 ﻿using EnsembleFX.Logging;
 using EnsembleFX.Messaging.Logging;
+using EnsembleFX.Messaging.Model;
 using EnsembleFX.Repository.Model;
 using Microsoft.Extensions.Options;
 using System;
@@ -25,10 +26,12 @@ namespace EnsembleFX.Messaging.Service
     {
         ILogController logController;
         IOptions<ConnectionStrings> connectionStrings;
-        public SubscriberManager(ILogController logController, IOptions<ConnectionStrings> connectionStrings)
+        IOptions<AzureServiceBusConfiguration> serviceBusConfiguration;
+        public SubscriberManager(ILogController logController, IOptions<ConnectionStrings> connectionStrings, IOptions<AzureServiceBusConfiguration> serviceBusConfiguration)
         {
             this.logController = logController;
             this.connectionStrings = connectionStrings;
+            this.serviceBusConfiguration = serviceBusConfiguration;
         }
 
         #region Public Members
@@ -93,7 +96,7 @@ namespace EnsembleFX.Messaging.Service
         /// <param name="subscriberType">Type of the subscriber.</param>
         public void RegisterSubscriber(string subscriberType)
         {
-            IMessageBusBuilder builder = new MessageBusBuilder(this.logController, this.connectionStrings);
+            IMessageBusBuilder builder = new MessageBusBuilder(this.logController, this.connectionStrings, this.serviceBusConfiguration);
             IMessageSubscriber subscriber = builder.BuildSubscriber(subscriberType);
             if (subscriber != null)
             {

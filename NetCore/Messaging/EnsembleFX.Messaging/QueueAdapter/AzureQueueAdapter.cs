@@ -3,7 +3,7 @@ using EnsembleFX.Logging;
 using EnsembleFX.Messaging.Bus;
 using EnsembleFX.Messaging.Configuration;
 using EnsembleFX.Messaging.Logging;
-using EnsembleFX.Messaging.Logging;
+using EnsembleFX.Messaging.Model;
 using EnsembleFX.Messaging.QueueAdapter;
 using EnsembleFX.Messaging.Service;
 using EnsembleFX.Repository.Model;
@@ -36,26 +36,26 @@ namespace EnsembleFX.Messaging.QueueAdapter
         readonly IBusLogger _logger;
         IAsyncResult _asyncStart;
 
-        public AzureQueueAdapter(IConfigurationFactory configFactory, string configurationName, IBusLogger logger, ILogController logController, IOptions<ConnectionStrings> connectionStrings)
+        public AzureQueueAdapter(IConfigurationFactory configFactory, string configurationName, IBusLogger logger, ILogController logController, IOptions<ConnectionStrings> connectionStrings, IOptions<AzureServiceBusConfiguration> serviceBusConfiguration)
         {
             this._configuration = configFactory.GetConfiguration<AzureQueueConfiguration>("AzureQueueConfiguration/Queue");
-            _azureQueueHelper = new AzureQueueHelper(logController, connectionStrings);
+            _azureQueueHelper = new AzureQueueHelper(logController, connectionStrings, serviceBusConfiguration);
             _azureQueueHelper.TopicName = _configuration.name;
             this._logger = logger;
         }
 
-        public AzureQueueAdapter(AzureQueueConfiguration configuration, IBusLogger logger, ILogController logController, IOptions<ConnectionStrings> connectionStrings)
+        public AzureQueueAdapter(AzureQueueConfiguration configuration, IBusLogger logger, ILogController logController, IOptions<ConnectionStrings> connectionStrings, IOptions<AzureServiceBusConfiguration> serviceBusConfiguration)
         {
             this._configuration = configuration;
-            _azureQueueHelper = new AzureQueueHelper(logController, connectionStrings);
+            _azureQueueHelper = new AzureQueueHelper(logController, connectionStrings, serviceBusConfiguration);
             _azureQueueHelper.TopicName = _configuration.name;
             this._logger = logger;
         }
 
-        public AzureQueueAdapter(IConfigurationFactory configFactory, string configurationName, IBusLogger logger, string topicName, ILogController logController, IOptions<ConnectionStrings> connectionStrings)
+        public AzureQueueAdapter(IConfigurationFactory configFactory, string configurationName, IBusLogger logger, string topicName, ILogController logController, IOptions<ConnectionStrings> connectionStrings, IOptions<AzureServiceBusConfiguration> serviceBusConfiguration)
         {
             this._configuration = configFactory.GetConfiguration<AzureQueueConfiguration>("AzureQueueConfiguration/Queue");
-            _azureQueueHelper = new AzureQueueHelper(logController, connectionStrings);
+            _azureQueueHelper = new AzureQueueHelper(logController, connectionStrings, serviceBusConfiguration);
             _azureQueueHelper.TopicName = topicName;
             this._logger = logger;
         }

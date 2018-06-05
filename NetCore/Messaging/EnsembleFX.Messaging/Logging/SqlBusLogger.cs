@@ -1,6 +1,7 @@
 ﻿using EnsembleFX.Logging;
 using EnsembleFX.Messaging.Configuration;
 using EnsembleFX.Messaging.Exception;
+using EnsembleFX.Messaging.Model;
 using EnsembleFX.Messaging.Serialization;
 using EnsembleFX.Messaging.Service;
 using EnsembleFX.Repository.Model;
@@ -21,10 +22,14 @@ namespace EnsembleFX.Messaging.Logging
     {
         ILogController logController;
         IOptions<ConnectionStrings> connectionStrings;
-        public SqlBusLogger(ILogController logController, IOptions<ConnectionStrings> connectionStrings)
+        IOptions<AzureServiceBusConfiguration> serviceBusConfiguration;
+        public SqlBusLogger(ILogController logController, IOptions<ConnectionStrings> connectionStrings, IOptions<AzureServiceBusConfiguration> serviceBusConfiguration)
         {
             this.logController = logController;
             this.connectionStrings = connectionStrings;
+            this.serviceBusConfiguration = serviceBusConfiguration;
+
+
         }
         #region Public Methods
 
@@ -645,7 +650,7 @@ namespace EnsembleFX.Messaging.Logging
 
         private SqlConnection GetSqlConnection()
         {
-            IMessageBusBuilder messageBuilder = new MessageBusBuilder(this.logController, this.connectionStrings);
+            IMessageBusBuilder messageBuilder = new MessageBusBuilder(this.logController, this.connectionStrings, this.serviceBusConfiguration);
             IConfigurationFactory configFactory = messageBuilder.BuildConfigurationFactory();
             SqlConnection sqlConnection = new SqlConnection(System.Configuration.ConfigurationManager.ConnectionStrings["PasdcContext"].ToString());
             return sqlConnection;
