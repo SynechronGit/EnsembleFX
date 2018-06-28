@@ -17,7 +17,8 @@ namespace EnsembleFX.Communication.Email
         #region Private memebers
 
         private readonly IOptions<EmailAppSettings> emailAppSettings;
-        private readonly IList<IMessageTransportProvider> messageTransportProviders;
+        //private readonly IList<IMessageTransportProvider> messageTransportProviders;
+        private readonly IMessageTransportProvider messageTransportProviders;
 
         #endregion
 
@@ -29,7 +30,7 @@ namespace EnsembleFX.Communication.Email
         /// <param name="configuration">Configuration which is going to be used for Email communicator</param>
         /// <param name="messageTransportProviders">IEmailTransportProvider can contain only AzureSendGridEmailTransportProvider 
         /// or SMTPMailTransportProvider or both based on configuration. </param>
-        public EmailCommunicator(IOptions<EmailAppSettings> emailAppSettings, List<IMessageTransportProvider> messageTransportProviders)
+        public EmailCommunicator(IOptions<EmailAppSettings> emailAppSettings, IMessageTransportProvider messageTransportProviders)
         {
             this.emailAppSettings = emailAppSettings;
             this.messageTransportProviders = messageTransportProviders;
@@ -50,14 +51,21 @@ namespace EnsembleFX.Communication.Email
             var status = true;
             try
             {
-                foreach (IMessageTransportProvider provider in messageTransportProviders)
-                {
-                    if (!await provider.SendMessageAsync(transportMessage))
+                //foreach (IMessageTransportProvider provider in messageTransportProviders)
+                //{
+                //    if (!await provider.SendMessageAsync(transportMessage))
+                //    {
+                //        //TODO : Log error
+                //        status = false;
+                //    }
+                //}
+                
+                    if (!await messageTransportProviders.SendMessageAsync(transportMessage))
                     {
                         //TODO : Log error
                         status = false;
                     }
-                }
+                
             }
             catch (Exception e)
             {
