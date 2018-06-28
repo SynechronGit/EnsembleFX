@@ -7,8 +7,8 @@
     <Company>Synechron Technologies</Company>
     <Product>EnsembleFX Framework</Product>
     <Copyright>Synechron Technologies</Copyright>
-    <AssemblyVersion>1.0.0.1</AssemblyVersion>
-    <FileVersion>1.0.0.1</FileVersion>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
   </PropertyGroup>
   
   <ItemGroup>
