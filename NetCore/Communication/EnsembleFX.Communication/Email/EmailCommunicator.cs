@@ -1,6 +1,8 @@
 ﻿using EnsembleFX.Communication.Abstractions;
+using EnsembleFX.Communication.Model;
 using EnsembleFX.Communication.Models;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -14,7 +16,7 @@ namespace EnsembleFX.Communication.Email
     {
         #region Private memebers
 
-        private readonly IConfiguration configuration;
+        private readonly IOptions<EmailAppSettings> emailAppSettings;
         private readonly IList<IMessageTransportProvider> messageTransportProviders;
 
         #endregion
@@ -27,9 +29,9 @@ namespace EnsembleFX.Communication.Email
         /// <param name="configuration">Configuration which is going to be used for Email communicator</param>
         /// <param name="messageTransportProviders">IEmailTransportProvider can contain only AzureSendGridEmailTransportProvider 
         /// or SMTPMailTransportProvider or both based on configuration. </param>
-        public EmailCommunicator(IConfiguration configuration, List<IMessageTransportProvider> messageTransportProviders)
+        public EmailCommunicator(IOptions<EmailAppSettings> emailAppSettings, List<IMessageTransportProvider> messageTransportProviders)
         {
-            this.configuration = configuration;
+            this.emailAppSettings = emailAppSettings;
             this.messageTransportProviders = messageTransportProviders;
         }
 

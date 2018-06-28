@@ -1,7 +1,9 @@
 ﻿using EnsembleFX.Communication.Abstractions;
+using EnsembleFX.Communication.Model;
 using EnsembleFX.Communication.Models;
 using MailKit;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using MimeKit;
 using System;
 using System.Threading.Tasks;
@@ -15,7 +17,7 @@ namespace EnsembleFX.Communication.Email
     {
         #region Private members
 
-        private readonly IConfiguration configuration;
+        private readonly IOptions<EmailAppSettings> emailAppSettings;
         private IMailTransport mailTransport;
 
         #endregion
@@ -26,9 +28,9 @@ namespace EnsembleFX.Communication.Email
         /// Initializes a new instance of the <see cref="SMTPMailTransportProvider"/> class.
         /// </summary>
         /// <param name="configuration">Configuration which is going to be used for SMTP Mail</param>
-        public SMTPMailTransportProvider(IConfiguration configuration, IMailTransport mailTransport)
+        public SMTPMailTransportProvider(IOptions<EmailAppSettings> emailAppSettings, IMailTransport mailTransport)
         {
-            this.configuration = configuration;
+            this.emailAppSettings = emailAppSettings;
             this.mailTransport = mailTransport;
         }
 
@@ -53,8 +55,17 @@ namespace EnsembleFX.Communication.Email
                 var processedMessage = this.Process(transportMessage);
                 var mimeMessage = this.CreateMessage(processedMessage);
 
-                await this.mailTransport.SendAsync(mimeMessage);
-                return true;
+                this.mailTransport.Connect(this.emailAppSettings.Value.Host, this.emailAppSettings.Value.Port);
+                if (this.mailTransport.IsConnected)
+                {
+                    this.mailTransport.Authenticate(this.emailAppSettings.Value.Username, this.emailAppSettings.Value.Password);
+                    if (this.mailTransport.IsAuthenticated)
+                    {
+                        await this.mailTransport.SendAsync(mimeMessage);
+                        return true;
+                    }
+                }
+                return false;
             }
             catch (Exception e)
             {
@@ -77,10 +88,10 @@ namespace EnsembleFX.Communication.Email
         }
 
         // Gets a configuration from source using key value
-        private string GetConfiguration(string key)
-        {
-            return this.configuration[key];
-        }
+        //private string GetConfiguration(string key)
+        //{
+        //    return this.configuration[key];
+        //}
 
         //Create MimeMessage using TransportMessage object
         private MimeMessage CreateMessage(TransportMessage message)
@@ -89,8 +100,8 @@ namespace EnsembleFX.Communication.Email
             mimeMessage.From.Add(new MailboxAddress("", message.From));
             mimeMessage.To.Add(new MailboxAddress("", message.To));
             mimeMessage.Subject = message.Subject;
-            mimeMessage.Cc.Add(InternetAddress.Parse(message.CC));
-            mimeMessage.Bcc.Add(InternetAddress.Parse(message.Bcc));
+            mimeMessage.Cc.Add(new MailboxAddress("", message.CC));
+            mimeMessage.Bcc.Add(new MailboxAddress("", message.Bcc));
             mimeMessage.Body = new TextPart("plain")
             {
                 Text = message.Body
