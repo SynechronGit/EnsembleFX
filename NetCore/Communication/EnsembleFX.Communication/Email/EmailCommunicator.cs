@@ -18,6 +18,11 @@ namespace EnsembleFX.Communication.Email
 
         private readonly IOptions<EmailAppSettings> emailAppSettings;
         //private readonly IList<IMessageTransportProvider> messageTransportProviders;
+        /// <summary>
+        /// TODO : We need to implement list of providers,
+        /// Currently have implemented only one provider as it was giving error,
+        /// Need to do RnD for the same
+        /// </summary>
         private readonly IMessageTransportProvider messageTransportProviders;
 
         #endregion
@@ -59,8 +64,13 @@ namespace EnsembleFX.Communication.Email
                 //        status = false;
                 //    }
                 //}
-                
-                    if (!await messageTransportProviders.SendMessageAsync(transportMessage))
+
+                /// <summary>
+                /// TODO : We need to implement list of providers,
+                /// Currently have implemented only one provider as it was giving error,
+                /// Need to do RnD for the same
+                /// </summary>
+                if (!await messageTransportProviders.SendMessageAsync(transportMessage))
                     {
                         //TODO : Log error
                         status = false;
