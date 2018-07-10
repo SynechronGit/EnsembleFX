@@ -99,9 +99,15 @@ namespace EnsembleFX.Communication.Email
             var mimeMessage = new MimeMessage();
             mimeMessage.From.Add(new MailboxAddress("", message.From));
             mimeMessage.To.Add(new MailboxAddress("", message.To));
+            if (!string.IsNullOrWhiteSpace(message.CC))
+            {
+                mimeMessage.Cc.Add(new MailboxAddress("", message.CC));
+            }
+            if (!string.IsNullOrWhiteSpace(message.Bcc))
+            {
+                mimeMessage.Bcc.Add(new MailboxAddress("", message.Bcc));
+            }
             mimeMessage.Subject = message.Subject;
-            mimeMessage.Cc.Add(new MailboxAddress("", message.CC));
-            mimeMessage.Bcc.Add(new MailboxAddress("", message.Bcc));
             mimeMessage.Body = new TextPart("plain")
             {
                 Text = message.Body
