@@ -123,5 +123,10 @@ namespace EnsembleFX.StorageAdapter
         {
             throw new NotImplementedException();
         }
+
+        public Task<string> GetBlobUrl(string key)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

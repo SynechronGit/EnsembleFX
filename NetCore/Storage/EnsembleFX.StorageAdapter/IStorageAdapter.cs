@@ -56,5 +56,12 @@ namespace EnsembleFX.StorageAdapter
         /// </summary>
         /// <returns>token to reference</returns>
         string GetSASContainerToken();
+
+        /// <summary>
+        /// Get Blob Url by Blob Id(key)
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        Task<string> GetBlobUrl(string key);
     }
 }

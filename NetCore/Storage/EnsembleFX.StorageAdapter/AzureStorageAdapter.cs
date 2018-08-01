@@ -88,7 +88,7 @@ namespace EnsembleFX.StorageAdapter
             try
             {
                 MemoryStream blobStream = new MemoryStream();
-                blockBlob = blobContainer.GetBlockBlobReference(key);
+                blockBlob = blobContainer.GetBlockBlobReference(key);                
                 await blockBlob.DownloadToStreamAsync(blobStream);
                 returnText = Encoding.UTF8.GetString(blobStream.ToArray());
             }
@@ -99,6 +99,23 @@ namespace EnsembleFX.StorageAdapter
             }
             //return the encoded content of the blob
             return returnText;
+        }
+
+        public async Task<string> GetBlobUrl(string key)
+        {
+            string BlobUrl = string.Empty;
+            try
+            {
+                MemoryStream blobStream = new MemoryStream();
+                blockBlob = blobContainer.GetBlockBlobReference(key);
+                BlobUrl = blockBlob.Uri.AbsoluteUri;
+            }
+            catch (Exception)
+            {
+                //TODO: Logs an error                
+            }
+            //return the encoded content of the blob
+            return BlobUrl;
         }
 
         public bool UploadContent(string key, string fileName, bool deleteAfter)
