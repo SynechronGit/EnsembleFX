@@ -113,18 +113,18 @@ namespace EnsembleFX.StorageAdapter
         {
             throw new NotImplementedException();
         }
-
-        bool IStorageAdapter.DeleteContent(string key)
-        {
-            throw new NotImplementedException();
-        }
-
+      
         public Task<string> GetContentTextAsync(string key)
         {
             throw new NotImplementedException();
         }
 
         public Task<string> GetBlobUrl(string key)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<bool> IStorageAdapter.DeleteContent(string key)
         {
             throw new NotImplementedException();
         }

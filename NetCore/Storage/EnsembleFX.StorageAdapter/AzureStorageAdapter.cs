@@ -88,7 +88,7 @@ namespace EnsembleFX.StorageAdapter
             try
             {
                 MemoryStream blobStream = new MemoryStream();
-                blockBlob = blobContainer.GetBlockBlobReference(key);                
+                blockBlob = blobContainer.GetBlockBlobReference(key);
                 await blockBlob.DownloadToStreamAsync(blobStream);
                 returnText = Encoding.UTF8.GetString(blobStream.ToArray());
             }
@@ -188,19 +188,19 @@ namespace EnsembleFX.StorageAdapter
             return blobStream;
         }
 
-        public bool DeleteContent(string key)
+        public async Task<bool> DeleteContent(string key)
         {
             try
             {
                 blockBlob = blobContainer.GetBlockBlobReference(key);
-                blockBlob.DeleteAsync().Wait();
+                await blockBlob.DeleteAsync();
                 return true;
             }
             catch (Exception)
             {
-                //TODO: Logs an error
-                return false;
+                //TODO: Logs an error                
             }
+            return false;
         }
 
         public async Task<MemoryStream> GetContentAsync(string key)

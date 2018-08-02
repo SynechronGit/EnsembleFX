@@ -40,11 +40,13 @@ namespace EnsembleFX.StorageAdapter
         /// <param name="key">key to blob reference</param>
         /// <returns>memory stream</returns>
         Task<MemoryStream> GetContentAsync(string key);
+
         /// <summary>
         /// Delete the blob from the azure blob storage for a given blob
         /// </summary>
         /// <param name="key">key to blob reference</param>
-        bool DeleteContent(string key);
+        Task<bool> DeleteContent(string key);
+
         /// <summary>
         /// Get encoded content from the azure blob storage for a given blob
         /// </summary>
